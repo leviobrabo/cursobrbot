@@ -1543,19 +1543,22 @@ def cursos_dados(message):
 
 def get_idnt(message, curso):
     idnt = message.text
-    curso_existente = video_manager.db.videos.find_one({'idnt': idnt})
+    file_id = message.document.file_id  # Supondo que o file_id seja obtido de um documento enviado
+    curso['file_id'] = file_id  # Armazena o file_id no dicionário curso
 
+    curso_existente = video_manager.db.videos.find_one({'idnt': idnt, 'file_id': file_id})
+    
     if curso_existente:
-        bot.send_message(message.chat.id, "IDNT já existe. Agora insira as seguintes informações para atualização:")
+        bot.send_message(message.chat.id, "IDNT e File ID já existem. Agora insira as seguintes informações para atualização:")
         bot.send_message(message.chat.id, "Digite a nova descrição:")
-        bot.register_next_step_handler(message, get_description_existing, curso_existente)
+        bot.register_next_step_handler(message, get_description_existing, curso)
     else:
         curso['idnt'] = idnt
-        bot.send_message(message.chat.id, "IDNT não encontrado. Vamos adicionar um novo curso.")
+        bot.send_message(message.chat.id, "IDNT não encontrado ou File ID diferente. Vamos adicionar um novo curso.")
         bot.send_message(message.chat.id, "Digite a descrição do curso:")
         bot.register_next_step_handler(message, get_description_new, curso)
 
-# Quando o IDNT já existe
+# Quando o IDNT e File ID já existem
 def get_description_existing(message, curso):
     description = message.text
     curso['description'] = description
@@ -1564,13 +1567,13 @@ def get_description_existing(message, curso):
 
 def get_temp_existing(message, curso):
     temp = message.text
-    curso['temp'] = temp
+    curso['temp'] = int(temp)
     bot.send_message(message.chat.id, "Digite o episódio do curso:")
     bot.register_next_step_handler(message, get_episode_existing, curso)
 
 def get_episode_existing(message, curso):
     episodio = message.text
-    curso['episodio'] = episodio
+    curso['episodio'] = int(episodio)
     bot.send_message(message.chat.id, "Digite a categoria do curso:")
     bot.register_next_step_handler(message, get_category_existing, curso)
 
@@ -1582,7 +1585,7 @@ def get_category_existing(message, curso):
 
 def get_size_existing(message, curso):
     tamanho = message.text
-    curso['tamanho'] = tamanho
+    curso['tamanho'] = int(tamanho)
     bot.send_message(message.chat.id, "Digite a URL da thumbnail do curso:")
     bot.register_next_step_handler(message, get_thumb_existing, curso)
 
@@ -1590,10 +1593,14 @@ def get_thumb_existing(message, curso):
     thumb_nail_url = message.text
     curso['thumb_nail'] = thumb_nail_url
 
-    video_manager.db.videos.update_one({'idnt': curso['idnt']}, {'$set': curso})
+    # Atualiza o documento com base em idnt e file_id
+    video_manager.db.videos.update_one(
+        {'idnt': curso['idnt'], 'file_id': curso['file_id']},
+        {'$set': curso}
+    )
     bot.send_message(message.chat.id, "✅ Dados do curso atualizados com sucesso!")
 
-# Quando o IDNT não existe e estamos adicionando um novo curso
+# Quando o IDNT não existe ou o File ID é diferente e estamos adicionando um novo curso
 def get_description_new(message, curso):
     description = message.text
     curso['description'] = description
@@ -1602,31 +1609,31 @@ def get_description_new(message, curso):
 
 def get_video_total_new(message, curso):
     video_total = message.text
-    curso['video_total'] = video_total
+    curso['video_total'] = int(video_total)
     bot.send_message(message.chat.id, "Digite a data de lançamento do curso:")
     bot.register_next_step_handler(message, get_lanc_new, curso)
 
 def get_lanc_new(message, curso):
     lanc = message.text
-    curso['lanc'] = lanc
+    curso['lanc'] = int(lanc)
     bot.send_message(message.chat.id, "Digite a duração do curso:")
     bot.register_next_step_handler(message, get_duracao_new, curso)
 
 def get_duracao_new(message, curso):
     duracao = message.text
-    curso['duracao'] = duracao
+    curso['duracao'] = int(duracao)
     bot.send_message(message.chat.id, "Digite a temporada do curso:")
     bot.register_next_step_handler(message, get_temp_new, curso)
 
 def get_temp_new(message, curso):
     temp = message.text
-    curso['temp'] = temp
+    curso['temp'] = int(temp)
     bot.send_message(message.chat.id, "Digite o episódio do curso:")
     bot.register_next_step_handler(message, get_episode_new, curso)
 
 def get_episode_new(message, curso):
     episodio = message.text
-    curso['episodio'] = episodio
+    curso['episodio'] = int(episodio)
     bot.send_message(message.chat.id, "Digite a categoria do curso:")
     bot.register_next_step_handler(message, get_category_new, curso)
 
@@ -1638,8 +1645,8 @@ def get_category_new(message, curso):
 
 def get_size_new(message, curso):
     tamanho = message.text
-    curso['tamanho'] = tamanho
-    bot.send_message(message.chat.id, "Digite o nome do criação do curso:")
+    curso['tamanho'] = int(tamanho)
+    bot.send_message(message.chat.id, "Digite o nome do criador do curso:")
     bot.register_next_step_handler(message, get_criado_new, curso)
 
 def get_criado_new(message, curso):
@@ -1658,8 +1665,10 @@ def get_thumb_new(message, curso):
     thumb_nail_url = message.text
     curso['thumb_nail'] = thumb_nail_url
 
-    video_manager.db.videos.update_one({'file_id': curso['file_id']}, {'$set': curso})
+    # Adiciona um novo documento no banco de dados
+    video_manager.db.videos.insert_one(curso)
     bot.send_message(message.chat.id, "✅ Novo curso adicionado com sucesso!")
+
 
 
 def schedule_checker():
