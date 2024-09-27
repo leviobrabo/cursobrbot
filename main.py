@@ -729,14 +729,14 @@ def inline_query(query):
         if query_text.startswith("ano="):
             match = re.match(r"ano=(\d{4})", query_text)
             if match:
-                ano = str(match.group(1))
+                ano = int(match.group(1))
                 cursos = searcher.search_by_year(ano)
                 results = create_inline_results(cursos)
         elif query_text.startswith("genero="):
             match = re.match(r"genero=(\w+)", query_text)
             if match:
-                genero = match.group(1)
-                cursos = searcher.search_by_categoria(genero)
+                categoria = str(match.group(1))
+                cursos = searcher.search_by_categoria(categoria)
                 results = create_inline_results(cursos)
         elif query_text.startswith("letra="):
             match = re.match(r"letra=\s*(\w)", query_text)
