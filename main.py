@@ -1539,11 +1539,10 @@ def cursos_dados(message):
                 return
 
             bot.send_message(message.chat.id, "Digite o idnt do curso:")
-            bot.register_next_step_handler(message, get_idnt, curso)
+            bot.register_next_step_handler(message, get_idnt, curso, file_id)
 
-def get_idnt(message, curso):
+def get_idnt(message, curso, file_id):
     idnt = message.text
-    file_id = message.document.file_id  # Supondo que o file_id seja obtido de um documento enviado
     curso['file_id'] = file_id  # Armazena o file_id no dicionário curso
 
     curso_existente = video_manager.db.videos.find_one({'idnt': idnt, 'file_id': file_id})
