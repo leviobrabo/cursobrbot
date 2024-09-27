@@ -1639,12 +1639,18 @@ def get_category_new(message, curso):
 def get_size_new(message, curso):
     tamanho = message.text
     curso['tamanho'] = tamanho
-    bot.send_message(message.chat.id, "Digite a data de criação do curso:")
+    bot.send_message(message.chat.id, "Digite o nome do criação do curso:")
     bot.register_next_step_handler(message, get_criado_new, curso)
 
 def get_criado_new(message, curso):
     criado = message.text
     curso['criado'] = criado
+    bot.send_message(message.chat.id, "Digite o nome do curso:")
+    bot.register_next_step_handler(message, get_nome_new, curso)
+
+def get_nome_new(message, curso):
+    nome = message.text
+    curso['nome'] = nome
     bot.send_message(message.chat.id, "Digite a URL da thumbnail do curso:")
     bot.register_next_step_handler(message, get_thumb_new, curso)
 
