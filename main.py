@@ -200,7 +200,18 @@ def callback_handler(call):
                 '↩️ Voltar', callback_data='menu_start'
                 )
                 markup.add(back_to_home)
-                caption_sub = "Você já é premium!"
+
+                final_date = datetime.strptime(user.get('final_date'), '%Y-%m-%d %H:%M:%S')
+                days_left = (final_date - datetime.now()).days
+        
+
+                caption_sub = (
+                    "<b>🎉 Parabéns! Você já é um assinante premium.</b>\n\n"
+                    "💎 <b>Assinatura ativa:</b> Você tem acesso total aos cursos e funcionalidades do bot.\n"
+                    f"📅 <b>Data de Expiração:</b> {user.get('final_date')}\n"
+                    f"⏳ <b>Tempo restante:</b> {days_left} dias até a expiração da sua assinatura.\n\n"
+                    "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
+                )
                 bot.edit_message_media(
                 chat_id=call.from_user.id,
                 message_id=call.message.message_id,
@@ -221,7 +232,13 @@ def callback_handler(call):
                 values_btn.row(btn_150)
                 values_btn.row(btn_cancel)
 
-                caption_nws = "Escolha qual plano você deseja assinar:"
+                caption_nws = (
+                    "⭐️ <b>Escolha seu plano de assinatura:</b>\n\n"
+                    "Com a assinatura premium, você terá acesso ilimitado a todos os cursos, "
+                    "suporte prioritário e a possibilidade de favoritar seus cursos preferidos. "
+                    "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
+                    "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
+                )
                 bot.edit_message_media(
                 chat_id=call.from_user.id,
                 message_id=call.message.message_id,
@@ -248,12 +265,18 @@ def callback_handler(call):
             
             selected_stars = stars_map[call.data]
             selected_months = months_map[call.data]
-            
+            description = (
+                    f"🎉 Obrigado por escolher a assinatura premium de {selected_months} mês(es)!\n\n"
+                    f"Você está adquirindo <b>{selected_stars} estrelas</b> para desbloquear "
+                    f"todos os recursos exclusivos do Curso Bot. Aproveite acesso ilimitado aos cursos, "
+                    "suporte prioritário, e muito mais durante o período da sua assinatura.\n\n"
+                    "💳 <b>Pagamento Seguro:</b> Seu pagamento será processado de forma anônima e segura diretamente pelo Telegram."
+                )
             bot.send_invoice(
                 call.from_user.id,
                 provider_token=None,  
                 title=f'Compra de {selected_stars} Estrelas - {selected_months} mês(es) de Premium',
-                description=f'Você está comprando {selected_stars} estrelas para {selected_months} mês(es) de acesso premium.',
+                description=description,
                 currency='XTR',  
                 prices=[
                     telebot.types.LabeledPrice(label=f'{selected_stars} Estrelas', amount=selected_stars )  
@@ -407,8 +430,7 @@ def callback_handler(call):
             back_to_press_two =  types.InlineKeyboardButton(
                 '⬅️ Retornar', callback_data='press_text_two'
             )   
-            markup.add(back_to_home)
-            markup.add(back_to_press_two)
+            markup.add(back_to_press_two, back_to_home)
             markup.add(assinatura)
             photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
 
@@ -533,15 +555,27 @@ def got_payment(message):
                     user_manager.update_user_info(int(indicador_id), "final_date", final_date)
                     user_manager.update_user_info(int(indicador_id), 'premium', 'true')
 
+                bonus_message = (
+                    "<b>🎉 Parabéns! Alguém assinou usando seu link de indicação.</b>\n\n"
+                    "Você ganhou <b>1 dia de acesso premium</b> como recompensa! Agora você pode continuar aproveitando "
+                    "todos os nossos cursos sem limites. Continue compartilhando e indique mais amigos para ganhar ainda mais dias grátis!\n\n"
+                    f"📅 <b>Seu novo prazo de expiração:</b> {final_date}."
+                )
                 bot.send_message(
                     int(indicador_id), 
-                    "<b>Parabéns! Alguém assinou usando sua referência.</b>\n\nVocê recebeu 1 dia de acesso para assistir seus cursos.", 
+                    bonus_message, 
                     parse_mode="HTML"
                 )
             
     
         photo_paid = 'https://i.imgur.com/Vcwajly.png'
-        caption_sucess = f"Pagamento bem-sucedido! Você agora é premium por {months} mês(es)."
+        caption_sucess = (
+            f"🎉 <b>Pagamento bem-sucedido!</b>\n\n"
+            f"Você adquiriu <b>{payload_text}</b> para {months} mês(es) de acesso premium ao Curso Bot.\n"
+            "Agora você tem acesso ilimitado a todos os nossos cursos, com suporte prioritário e a possibilidade de favoritar seus cursos preferidos.\n\n"
+            f"📅 <b>Seu acesso premium expira em:</b> {expiration_date.strftime('%d/%m/%Y')}\n\n"
+            "Aproveite sua jornada de aprendizado e, se precisar de algo, estamos aqui para ajudar! 😉"
+        )
         markup = types.InlineKeyboardMarkup()
         back_to_home = types.InlineKeyboardButton(
                     '↩️ Voltar', callback_data='menu_start'
