@@ -1653,8 +1653,8 @@ def get_thumb_existing(message, curso):
 
     # Atualiza o documento com base em idnt e file_id
     video_manager.db.videos.update_one(
-        {'idnt': curso['idnt'], 'file_id': curso['file_id']},
-        {'$set': curso}
+        {'file_id': curso['file_id']},
+        {'$set': curso, }
     )
     bot.send_message(message.chat.id, "✅ Dados do curso atualizados com sucesso!")
 
