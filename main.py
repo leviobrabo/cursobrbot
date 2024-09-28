@@ -223,9 +223,9 @@ def callback_handler(call):
             )
             else:
                 values_btn = types.InlineKeyboardMarkup()
-                btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
-                btn_100 = types.InlineKeyboardButton('⭐️ 350 Estrelas - 2 Meses', callback_data="350_estrelas")
-                btn_150 = types.InlineKeyboardButton('⭐️ 500 Estrelas - 3 Meses', callback_data="500_estrelas")
+                btn_50 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 1 Mês', callback_data="100_estrelas")
+                btn_100 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 2 Meses', callback_data="200_estrelas")
+                btn_150 = types.InlineKeyboardButton('⭐️ 350 Estrelas - 3 Meses', callback_data="350_estrelas")
                 btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
@@ -247,20 +247,20 @@ def callback_handler(call):
                 ),
                 reply_markup=values_btn,
             )
-        elif call.data in ["50_estrelas", "350_estrelas", "500_estrelas"]:
+        elif call.data in ["100_estrelas", "200_estrelas", "350_estrelas"]:
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id) 
             stars_map = {
-                "50_estrelas": 50,
-                "350_estrelas": 350,
-                "500_estrelas": 500
+                "100_estrelas": 100,
+                "200_estrelas": 200,
+                "350_estrelas": 350
             }
             
             months_map = {
-                "50_estrelas": 1,
-                "350_estrelas": 2,
-                "500_estrelas": 3
+                "100_estrelas": 1,
+                "200_estrelas": 2,
+                "350_estrelas": 3
             }
             
             selected_stars = stars_map[call.data]
