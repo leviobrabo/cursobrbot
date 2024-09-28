@@ -266,8 +266,8 @@ def callback_handler(call):
             selected_stars = stars_map[call.data]
             selected_months = months_map[call.data]
             description = (
-                f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!\n\n" 
-                 "Lembre-se que você desbloquear "
+                f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!" 
+                "\n\nLembre-se que você desbloquear "
                 "todos os recursos exclusivos do Curso Bot."
             )
 
