@@ -661,9 +661,9 @@ class CursoSearcher:
             "nome": {"$regex": regex_pattern, "$options": "i"}
         }))
 
-    def search_by_temp_total(self, temp_total: str) -> List[Dict]:
+    def search_by_temp_total(self, temp_total: int) -> List[Dict]:
         return list(self.video_manager.db.videos.find({
-            "temp_total": str(temp_total),
+            "temp_total": int(temp_total),
             "nome": {"$ne": ""},
         }))
 
@@ -739,7 +739,7 @@ def inline_query(query):
                 cursos = searcher.search_by_categoria(categoria)
                 results = create_inline_results(cursos)
         elif query_text.startswith("letra="):
-            match = re.match(r"letra=\s*(\w)", query_text)
+            match = re.match(r"letra=(\w)", query_text)
             if match:
                 letra = match.group(1)
                 cursos = searcher.search_by_first_letter(letra)
@@ -845,6 +845,7 @@ def inline_query(query):
                 )
                 results = [article_result]
                 bot.answer_inline_query(query.id, results)
+            
             else:
                 result_default = types.InlineQueryResultArticle(
                     id="nenhum_historico",
@@ -856,7 +857,68 @@ def inline_query(query):
                     thumbnail_url="https://i.imgur.com/UjaiwTf.png",
                 )
                 bot.answer_inline_query(query.id, [result_default], cache_time=0)
+        elif query_text.startswith("FAVORITO"):
+            user_id = query.from_user.id
+            user = user_manager.search_user(user_id)
+            favorito = user.get('my_fav', [])
             
+            if favorito:
+                favorito_parts = favorito.split(' ')
+                if len(favorito_parts) == 1:
+                    identificador = favorito_parts[0]
+                
+                curso = video_manager.db.videos.find_one({
+                    "idnt": identificador,
+                })
+                
+                if not curso:
+                    error_result = types.InlineQueryResultArticle(
+                        id="video_nao_encontrado",
+                        title="Curso não encontrado",
+                        description="Clique aqui para saber o motivo",
+                        input_message_content=types.InputTextMessageContent(
+                            message_text="Por favor, tente novamente... Se o erro persistir, entre em contato com o suporte"
+                        ),
+                        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+                    )
+                    bot.answer_inline_query(query.id, [error_result])
+                    return
+                
+                title = curso.get("description")
+                episodio = curso.get("episodio")
+                temporada = curso.get("temp")
+                result_id = f"curso_{curso.get('id')}"
+                thumbnail_url = curso.get("thumb_nail")
+                assistir = f"ASSISTIR={identificador}"
+                description = (
+                    f"Temporada: {temporada}\n"
+                    f"Episódio: {episodio}"
+                )
+                
+                article_result = types.InlineQueryResultArticle(
+                    id=result_id,
+                    thumbnail_url=thumbnail_url,
+                    title=title,
+                    description=description,
+                    input_message_content=types.InputTextMessageContent(
+                        message_text=assistir,
+                    ),
+                )
+                results = [article_result]
+                bot.answer_inline_query(query.id, results)
+            
+            else:
+                result_default = types.InlineQueryResultArticle(
+                    id="nenhum_favorito",
+                    title="Você não possui cursos favoritados",
+                    description="Você ainda não favoritou nenhum episódio.",
+                    input_message_content=types.InputTextMessageContent(
+                        message_text="Seu favorito está vazio. Escolha algum curso e clique em adiconar ao favoritos"
+                    ),
+                    thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+                )
+                bot.answer_inline_query(query.id, [result_default], cache_time=0)
+
         else:
             cursos = searcher.search_by_partial_name(query_text)
             results = create_inline_results(cursos)
