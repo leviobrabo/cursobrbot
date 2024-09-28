@@ -2,7 +2,7 @@ from ..bot.bot import bot
 from telebot import types
 from ..database.users import UserManager
 from ..config import PAYMENT_POST_ID
-
+import logging
 user_manager = UserManager()
 
 @bot.message_handler(commands=["renovar_assinatura"])
@@ -46,24 +46,24 @@ def got_payment(message):
     user = user_manager.search_user(user_id)
     
     if not user:
-        bot.send_message(user_id, "Erro: usuário não encontrado no banco de dados.")
+        logging.error(user_id, "Erro: usuário não encontrado no banco de dados.")
         return
 
-    # Defina o tempo premium com base no número de estrelas
     if payload == 'stars_50':
         months = 1
+        payload_text = '50 estrela'
     elif payload == 'stars_350':
         months = 2
+        payload_text = '350 estrelas'
     elif payload == 'stars_500':
         months = 3
+        payload_text = '500 estrelas'
     else:
         bot.send_message(user_id, "Erro: o valor do pagamento não é válido.")
         return
     
-    # Atualiza o status do usuário no banco de dados para premium
     user_manager.update_user_info(user_id, 'premium', 'true')
     
-    # Calcula a data de expiração e define o initial_date
     from datetime import datetime, timedelta
     current_datetime = datetime.now()
     expiration_date = current_datetime + timedelta(days=30 * months)
@@ -72,30 +72,21 @@ def got_payment(message):
     user_manager.update_user_info(user_id, 'final_date', expiration_date.strftime('%Y-%m-%d %H:%M:%S'))
     user_manager.update_user_info(user_id, 'initial_date', initial_date)
 
-    # Verificar se o usuário tem um indicador
     indicador_id = user.get("indicado")
     if indicador_id:
         indicador = user_manager.search_user(int(indicador_id))
         
         if indicador:
-            print(indicador)
-            # Obter o valor atual de indicacao
-            indicacao_atual = indicador.get("indicacao", 0)  # Vamos garantir que 'indicacao' é um inteiro
+            indicacao_atual = indicador.get("indicacao", 0)  
             if isinstance(indicacao_atual, int):
                 indicacao_atual = int(indicacao_atual)
             else:
                 indicacao_atual = 0
-
-            print(f"Indicacao atual: {indicacao_atual}")
             
-            # Incrementar o valor de indicacao
             novo_valor_indicacao = indicacao_atual + 1
-            print(f"Novo valor de indicacao: {novo_valor_indicacao}")
             
-            # Atualiza o valor de indicacao no banco de dados
             user_manager.update_user_indicacao(int(indicador_id), novo_valor_indicacao)
 
-            # Atualiza o final_date do indicador
             final_date = indicador.get("final_date")
             if not final_date:
                 initial_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # Salvar com horas
@@ -111,16 +102,26 @@ def got_payment(message):
                 user_manager.update_user_info(int(indicador_id), "final_date", final_date)
                 user_manager.update_user_info(int(indicador_id), 'premium', 'true')
 
-            # Notifica o indicador sobre a indicação bem-sucedida
+            bonus_message = (
+                    "<b>🎉 Parabéns! Alguém assinou usando seu link de indicação.</b>\n\n"
+                    "Você ganhou <b>1 dia de acesso premium</b> como recompensa! Agora você pode continuar aproveitando "
+                    "todos os nossos cursos sem limites. Continue compartilhando e indique mais amigos para ganhar ainda mais dias grátis!\n\n"
+                    f"📅 <b>Seu novo prazo de expiração:</b> {final_date}."
+                )
             bot.send_message(
                 int(indicador_id), 
-                "<b>Parabéns! Alguém assinou usando sua referência.</b>\n\nVocê recebeu 1 dia de acesso para assistir seus filmes.", 
+                bonus_message, 
                 parse_mode="HTML"
             )
     
-    # Mensagem de confirmação de pagamento
     photo_paid = 'https://i.imgur.com/Vcwajly.png'
-    caption_sucess = f"Pagamento bem-sucedido! Você agora é premium por {months} mês(es)."
+    caption_sucess = (
+            f"🎉 <b>Pagamento bem-sucedido!</b>\n\n"
+            f"Você adquiriu <b>{payload_text}</b> para {months} mês(es) de acesso premium ao Curso Bot.\n"
+            "Agora você tem acesso ilimitado a todos os nossos cursos, com suporte prioritário e a possibilidade de favoritar seus cursos preferidos.\n\n"
+            f"📅 <b>Seu acesso premium expira em:</b> {expiration_date.strftime('%d/%m/%Y')}\n\n"
+            "Aproveite sua jornada de aprendizado e, se precisar de algo, estamos aqui para ajudar! 😉"
+        )
     markup = types.InlineKeyboardMarkup()
     back_to_home = types.InlineKeyboardButton(
                 '↩️ Voltar', callback_data='menu_start'
@@ -134,7 +135,6 @@ def got_payment(message):
         reply_markup=markup,
     )
 
-    # Enviar notificação de pagamento
     user_info = (
         f"<b>#{bot.get_me().username} #Pagamento</b>\n"
         f"<b>User:</b> {user.get('first_name', 'Usuário Desconhecido')}\n"

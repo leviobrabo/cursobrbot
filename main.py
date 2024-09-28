@@ -252,26 +252,29 @@ def callback_handler(call):
             user = user_manager.search_user(user_id)
             
             stars_map = {
-                "50_estrelas": 1,
+                "50_estrelas": 50,
                 "350_estrelas": 350,
                 "500_estrelas": 500
             }
             
             months_map = {
                 "50_estrelas": 1,
-                "350_estrelas": 3,
-                "500_estrelas": 6
+                "350_estrelas": 2,
+                "500_estrelas": 3
             }
             
             selected_stars = stars_map[call.data]
             selected_months = months_map[call.data]
             description = (
                     f"🎉 Obrigado por escolher a assinatura premium de {selected_months} mês(es)!\n\n"
-                    f"Você está adquirindo <b>{selected_stars} estrelas</b> para desbloquear "
+                    f"Você está adquirindo {selected_stars} estrelas para desbloquear "
                     f"todos os recursos exclusivos do Curso Bot. Aproveite acesso ilimitado aos cursos, "
                     "suporte prioritário, e muito mais durante o período da sua assinatura.\n\n"
                     "💳 <b>Pagamento Seguro:</b> Seu pagamento será processado de forma anônima e segura diretamente pelo Telegram."
                 )
+            markup = types.InlineKeyboardMarkup()
+            back_to_home = types.InlineKeyboardButton('↩️ Voltar', callback_data='menu_start')
+            markup.add(back_to_home)
             bot.send_invoice(
                 call.from_user.id,
                 provider_token=None,  
@@ -282,7 +285,8 @@ def callback_handler(call):
                     telebot.types.LabeledPrice(label=f'{selected_stars} Estrelas', amount=selected_stars )  
                 ],
                 start_parameter=f'stars_{selected_stars}',
-                invoice_payload=f'stars_{selected_stars}'
+                invoice_payload=f'stars_{selected_stars}',
+                reply_markup=markup
             )        
         elif call.data.startswith('categoria'):
             user_id = call.from_user.id
