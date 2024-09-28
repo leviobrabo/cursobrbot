@@ -60,9 +60,6 @@ msg_text_3 = (
     "de forma rápida e segura. 🌟"
 )
 
-# URL da imagem
-photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
-
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
@@ -358,6 +355,7 @@ def callback_handler(call):
             )   
             markup.add(back_to_home, pres_btn)
             markup.add(assinatura)
+            photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
 
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
@@ -386,6 +384,7 @@ def callback_handler(call):
             markup.add(back_to_home)
             markup.add(back_to_press, pres_btn)
             markup.add(assinatura)
+            photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
 
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
@@ -411,6 +410,7 @@ def callback_handler(call):
             markup.add(back_to_home)
             markup.add(back_to_press_two)
             markup.add(assinatura)
+            photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
 
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
