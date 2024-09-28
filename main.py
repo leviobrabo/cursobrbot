@@ -226,7 +226,9 @@ def callback_handler(call):
                 btn_50 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 1 Mês', callback_data="100_estrelas")
                 btn_100 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 2 Meses', callback_data="200_estrelas")
                 btn_150 = types.InlineKeyboardButton('⭐️ 350 Estrelas - 3 Meses', callback_data="350_estrelas")
+                btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
                 btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
+
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
                 values_btn.row(btn_150)
