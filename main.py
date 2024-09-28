@@ -1612,9 +1612,9 @@ def get_idnt(message, curso, file_id):
     curso_existente = video_manager.db.videos.find_one({'idnt': idnt})
     
     if curso_existente:
+        curso['idnt'] = idnt
         bot.send_message(message.chat.id, "IDNT e File ID já existem. Agora insira as seguintes informações para atualização:")
         bot.send_message(message.chat.id, "Digite a nova descrição:")
-        curso['idnt'] = idnt
         bot.register_next_step_handler(message, get_description_existing, curso)
     else:
         curso['idnt'] = idnt
