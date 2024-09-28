@@ -26,6 +26,44 @@ user_manager = UserManager()
 video_manager = VideoManager()
 vote_manager = VoteManager()
 
+# Definindo as mensagens divididas em três partes
+msg_text_1 = (
+    "<b>📚 Está cansado de perder tempo procurando cursos em canais? Conheça o Curso Bot!</b>\n\n"
+    "⭐ <b>Por que o bot é melhor que canais tradicionais?</b> ⭐\n\n"
+    "Muitos usuários enfrentam problemas ao tentar acessar cursos por meio de canais. Esses canais são frequentemente denunciados, caindo de forma inesperada, "
+    "o que faz você perder o acesso ao conteúdo. Além disso, é muito fácil se perder entre diversos grupos e canais, sem uma forma clara de organização. "
+    "Você também pode esquecer onde parou no último curso, ou pior, acabar se confundindo entre materiais de diferentes canais.\n\n"
+    "Outro problema é que, em canais, não existe uma forma simples de guardar o conteúdo para assistir depois. Para encontrar um curso específico, "
+    "você precisa navegar por longas listas de mensagens, o que consome tempo e energia. Ter que ingressar em diversos grupos para conseguir diferentes "
+    "cursos só complica ainda mais, sem contar que muitos canais são desorganizados e de difícil navegação."
+)
+
+msg_text_2 = (
+    "<b>🎓 As vantagens de usar o Curso Bot (@cursobrbot)</b>\n\n"
+    "• <b>Histórico de Assistidos:</b> Com o Curso Bot, você nunca mais vai se perder. Ele salva automaticamente o histórico de assistidos, permitindo que você saiba "
+    "exatamente onde parou em cada curso. Simples e prático.\n\n"
+    "• <b>Favoritar Cursos:</b> Encontrou um curso interessante, mas não tem tempo agora? Sem problemas! Marque-o como favorito e acesse quando quiser, sem precisar "
+    "procurar por ele novamente. Tudo a um clique de distância.\n\n"
+    "• <b>Assinatura com Custo Baixo:</b> O bot oferece planos acessíveis para todos os bolsos, permitindo que você tenha acesso a uma variedade de cursos "
+    "sem pesar no orçamento. Além disso, o pagamento é feito de forma totalmente anônima, utilizando as estrelas do próprio Telegram. Basta enviar as estrelas e pronto!"
+)
+
+msg_text_3 = (
+    "• <b>Reembolso Garantido:</b> Caso tenha qualquer problema com a sua assinatura, o reembolso é garantido e processado diretamente pelo Telegram, sem complicações.\n\n"
+    "• <b>Busca Avançada:</b> Precisa encontrar um curso específico? O Curso Bot oferece uma busca profunda, que permite filtrar por letra, ano ou categoria. "
+    "Isso facilita a localização do conteúdo que você deseja, de forma rápida e eficiente.\n\n"
+    "• <b>Sistema de Indicação:</b> Quer acesso gratuito? Basta indicar amigos! Se alguém assinar com seu link de indicação, você ganha acesso ao bot de forma "
+    "gratuita. Fácil e vantajoso!\n\n"
+    "• <b>Interface Simples e Suporte:</b> O layout do bot é direto e fácil de usar, com tutoriais detalhados para orientar seu uso. E se precisar de ajuda, "
+    "há suporte disponível para responder suas dúvidas e atender pedidos.\n\n"
+    "🌟 <b>Não perca tempo!</b> Acesse seus cursos favoritos de forma organizada e prática com o Curso Bot. Assine agora e tenha todo o conteúdo ao seu alcance, "
+    "de forma rápida e segura. 🌟"
+)
+
+# URL da imagem
+photo_url = 'https://i.imgur.com/n6fFGYg.jpeg'
+
+
 @bot.callback_query_handler(func=lambda call: True)
 def callback_handler(call):
     try:
@@ -309,74 +347,27 @@ def callback_handler(call):
         elif call.data.startswith('more'):
             user_id = call.from_user.id
             markup = types.InlineKeyboardMarkup()
-            back_to_home = types.InlineKeyboardButton(
-                '↩️ Voltar', callback_data='menu_start'
-            )
-            pres_btn = types.InlineKeyboardButton(
-                '➡️ Próximo', callback_data='press_text'
-            )
-            assinatura = types.InlineKeyboardButton(
-                text='🎫 Assinatura', callback_data='comprar'
-            )
-            markup.add(assinatura)
-            markup.add(back_to_home, pres_btn)
-            msg_text = (
-                "<b>📚 Está cansado de perder tempo procurando cursos em canais? Conheça o Curso Bot!</b>\n\n"
-                "⭐ <b>Por que o bot é melhor que canais tradicionais?</b> ⭐\n\n"
-                "Muitos usuários enfrentam problemas ao tentar acessar cursos por meio de canais. Esses canais são frequentemente denunciados, caindo de forma inesperada, "
-                "o que faz você perder o acesso ao conteúdo. Além disso, é muito fácil se perder entre diversos grupos e canais, sem uma forma clara de organização. "
-                "Você também pode esquecer onde parou no último curso, ou pior, acabar se confundindo entre materiais de diferentes canais.\n\n"
-                "Outro problema é que, em canais, não existe uma forma simples de guardar o conteúdo para assistir depois. Para encontrar um curso específico, "
-                "você precisa navegar por longas listas de mensagens, o que consome tempo e energia. Ter que ingressar em diversos grupos para conseguir diferentes "
-                "cursos só complica ainda mais, sem contar que muitos canais são desorganizados e de difícil navegação."
-            )
-
-            photo = 'https://i.imgur.com/n6fFGYg.jpeg'
-            bot.edit_message_media(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
-                    media=photo, caption=msg_text, parse_mode='HTML'
-                ),
-                reply_markup=markup,
-            )
-        elif call.data.startswith('press_text'):
-            user_id = call.from_user.id
-            markup = types.InlineKeyboardMarkup()
-            back_to_home = types.InlineKeyboardButton(
-                '#️⃣ Início', callback_data='menu_start'
-            )   
             assinatura = types.InlineKeyboardButton(
                 text='🎫 Assinatura', callback_data='comprar'
             )
             pres_btn = types.InlineKeyboardButton(
                 '➡️ Próximo', callback_data='press_text_two'
             )
-            back_to_more =  types.InlineKeyboardButton(
-                '⬅️ Retornar', callback_data='more'
+            back_to_home =  types.InlineKeyboardButton(
+                '⬅️ Retornar', callback_data='menu_start'
             )   
-            markup.add(back_to_home)
-            markup.add(back_to_more, pres_btn)
+            markup.add(back_to_home, pres_btn)
             markup.add(assinatura)
 
-            msg_text_2 = (
-                "<b>🎓 As vantagens de usar o Curso Bot (@cursobrbot)</b>\n\n"
-                "• <b>Histórico de Assistidos:</b> Com o Curso Bot, você nunca mais vai se perder. Ele salva automaticamente o histórico de assistidos, permitindo que você saiba "
-                "exatamente onde parou em cada curso. Simples e prático.\n\n"
-                "• <b>Favoritar Cursos:</b> Encontrou um curso interessante, mas não tem tempo agora? Sem problemas! Marque-o como favorito e acesse quando quiser, sem precisar "
-                "procurar por ele novamente. Tudo a um clique de distância.\n\n"
-                "• <b>Assinatura com Custo Baixo:</b> O bot oferece planos acessíveis para todos os bolsos, permitindo que você tenha acesso a uma variedade de cursos "
-                "sem pesar no orçamento. Além disso, o pagamento é feito de forma totalmente anônima, utilizando as estrelas do próprio Telegram. Basta enviar as estrelas e pronto!"
-            )
-            photo = 'https://i.imgur.com/n6fFGYg.jpeg'
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
                 media=types.InputMediaPhoto(
-                    media=photo, caption=msg_text_2, parse_mode='HTML'
+                    media=photo_url, caption=msg_text_1, parse_mode='HTML'
                 ),
                 reply_markup=markup,
             )
+
         elif call.data.startswith('press_text_two'):
             user_id = call.from_user.id
             markup = types.InlineKeyboardMarkup()
@@ -386,28 +377,46 @@ def callback_handler(call):
             assinatura = types.InlineKeyboardButton(
                 text='🎫 Assinatura', callback_data='comprar'
             )
-            back_to_press =  types.InlineKeyboardButton(
-                '⬅️ Retornar', callback_data='press_text'
-            )   
-            markup.add(assinatura)
-            markup.add(back_to_home, back_to_press)
-            msg_text_3 = (
-                "• <b>Reembolso Garantido:</b> Caso tenha qualquer problema com a sua assinatura, o reembolso é garantido e processado diretamente pelo Telegram, sem complicações.\n\n"
-                "• <b>Busca Avançada:</b> Precisa encontrar um curso específico? O Curso Bot oferece uma busca profunda, que permite filtrar por letra, ano ou categoria. "
-                "Isso facilita a localização do conteúdo que você deseja, de forma rápida e eficiente.\n\n"
-                "• <b>Sistema de Indicação:</b> Quer acesso gratuito? Basta indicar amigos! Se alguém assinar com seu link de indicação, você ganha acesso ao bot de forma "
-                "gratuita. Fácil e vantajoso!\n\n"
-                "• <b>Interface Simples e Suporte:</b> O layout do bot é direto e fácil de usar, com tutoriais detalhados para orientar seu uso. E se precisar de ajuda, "
-                "há suporte disponível para responder suas dúvidas e atender pedidos.\n\n"
-                "🌟 <b>Não perca tempo!</b> Acesse seus cursos favoritos de forma organizada e prática com o Curso Bot. Assine agora e tenha todo o conteúdo ao seu alcance, "
-                "de forma rápida e segura. 🌟"
+            pres_btn = types.InlineKeyboardButton(
+                '➡️ Próximo', callback_data='press_text_three'
             )
-            photo = 'https://i.imgur.com/n6fFGYg.jpeg'
+            back_to_press =  types.InlineKeyboardButton(
+                '⬅️ Retornar', callback_data='more'
+            )   
+            markup.add(back_to_home)
+            markup.add(back_to_press, pres_btn)
+            markup.add(assinatura)
+
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
                 media=types.InputMediaPhoto(
-                    media=photo, caption=msg_text_3, parse_mode='HTML'
+                    media=photo_url, caption=msg_text_2, parse_mode='HTML'
+                ),
+                reply_markup=markup,
+            )
+
+        elif call.data.startswith('press_text_three'):
+            user_id = call.from_user.id
+            markup = types.InlineKeyboardMarkup()
+            back_to_home = types.InlineKeyboardButton(
+                '#️⃣ Início', callback_data='menu_start'
+            )   
+            assinatura = types.InlineKeyboardButton(
+                text='🎫 Assinatura', callback_data='comprar'
+            )
+            back_to_press_two =  types.InlineKeyboardButton(
+                '⬅️ Retornar', callback_data='press_text_two'
+            )   
+            markup.add(back_to_home)
+            markup.add(back_to_press_two)
+            markup.add(assinatura)
+
+            bot.edit_message_media(
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                media=types.InputMediaPhoto(
+                    media=photo_url, caption=msg_text_3, parse_mode='HTML'
                 ),
                 reply_markup=markup,
             )
