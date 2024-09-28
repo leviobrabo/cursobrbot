@@ -267,9 +267,8 @@ def callback_handler(call):
             selected_months = months_map[call.data]
             description = (
                 f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!\n\n" 
-                f"Você está adquirindo {selected_stars} estrelas para desbloquear "
-                "todos os recursos exclusivos do Curso Bot.\n"
-                "Aproveite acesso ilimitado aos cursos e suporte prioritário durante sua assinatura."
+                 "Lembre-se que você desbloquear "
+                "todos os recursos exclusivos do Curso Bot."
             )
 
             markup = types.InlineKeyboardMarkup()
