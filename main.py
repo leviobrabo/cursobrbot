@@ -250,7 +250,7 @@ def callback_handler(call):
         elif call.data in ["50_estrelas", "350_estrelas", "500_estrelas"]:
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
-            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
+            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id) 
             stars_map = {
                 "50_estrelas": 50,
                 "350_estrelas": 350,
