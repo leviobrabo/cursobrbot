@@ -349,7 +349,7 @@ def callback_handler(call):
                     caption=caption_nws,
                     parse_mode='HTML',
                     reply_markup=values_btn
-                )   
+                )
         elif call.data.startswith('categoria'):
             user_id = call.from_user.id
             markup = types.InlineKeyboardMarkup()
