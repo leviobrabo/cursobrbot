@@ -276,8 +276,8 @@ def callback_handler(call):
             back_to_home = types.InlineKeyboardButton('↩️ Voltar', callback_data='menu_start')
             pay_button = types.InlineKeyboardButton(f'Pagar ⭐ {selected_stars}', pay=True)
 
-
-            markup.add(back_to_home, pay_button)
+            markup.add(pay_button)
+            markup.add(back_to_home)
             photo_pay = 'https://i.imgur.com/c3nzNhd.png'
 
             bot.send_invoice(
