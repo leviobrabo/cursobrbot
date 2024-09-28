@@ -312,6 +312,11 @@ def callback_handler(call):
             back_to_home = types.InlineKeyboardButton(
                 '↩️ Voltar', callback_data='menu_start'
             )
+            assinatura = types.InlineKeyboardButton(
+                text='🎫 Assinatura', callback_data='comprar'
+            )
+            markup.add(assinatura)
+            markup.add(back_to_home)
             msg_text = (
                 "<b>📚 Quer facilidade na hora de acessar seus cursos? Então você precisa conhecer o Curso Bot!</b>\n\n"
                 "⭐ <b>Por que o bot é a melhor escolha?</b> ⭐\n"
