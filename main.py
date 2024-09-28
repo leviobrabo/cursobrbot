@@ -273,11 +273,11 @@ def callback_handler(call):
                     "💳 <b>Pagamento Seguro:</b> Seu pagamento será processado de forma anônima e segura diretamente pelo Telegram."
                 )
             markup = types.InlineKeyboardMarkup()
-            back_to_home = types.InlineKeyboardButton('↩️ Voltar', callback_data='comprar_again')
+            back_to_pay_again = types.InlineKeyboardButton('↩️ Voltar', callback_data='pay_again')
             pay_button = types.InlineKeyboardButton(f'Pagar ⭐{selected_stars}', pay=True)
 
             markup.add(pay_button)
-            markup.add(back_to_home)
+            markup.add(back_to_pay_again)
 
             bot.send_invoice(
                 call.from_user.id,
@@ -292,7 +292,7 @@ def callback_handler(call):
                 invoice_payload=f'stars_{selected_stars}',
                 reply_markup=markup
             )        
-        elif call.data.startswith('comprar_again'):
+        elif call.data.startswith('pay_again'):
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
