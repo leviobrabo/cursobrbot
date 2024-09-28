@@ -278,6 +278,8 @@ def callback_handler(call):
 
 
             markup.add(back_to_home, pay_button)
+            photo_pay = 'https://i.imgur.com/c3nzNhd.png'
+
             bot.send_invoice(
                 call.from_user.id,
                 provider_token=None,  
@@ -289,6 +291,7 @@ def callback_handler(call):
                 ],
                 start_parameter=f'stars_{selected_stars}',
                 invoice_payload=f'stars_{selected_stars}',
+                photo_url=photo_pay,
                 reply_markup=markup
             )        
         elif call.data.startswith('categoria'):
