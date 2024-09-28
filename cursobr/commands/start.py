@@ -71,7 +71,7 @@ def cmd_start(message):
             text='🎫 Assinatura', callback_data='comprar'
         )
         historico = types.InlineKeyboardButton(
-            text='💾 Histórico', switch_inline_query_current_chat='HISTORICO'
+            text='ℹ️ Mais informações', callback_data='more'
         )
         categoria = types.InlineKeyboardButton(
             text='📈 Categoria', callback_data='categoria'

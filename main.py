@@ -58,7 +58,7 @@ def callback_handler(call):
                 text='🎫 Assinatura', callback_data='comprar'
             )
             historico = types.InlineKeyboardButton(
-                text='💾 Histórico', switch_inline_query_current_chat='HISTORICO'
+                text='ℹ️ Mais informações', callback_data='more'
             )
             categoria = types.InlineKeyboardButton(
                 text='📈 Categoria', callback_data='categoria'
@@ -298,6 +298,38 @@ def callback_handler(call):
                 '/my_fav - Sua categoria favorita'
             )
             photo = 'https://i.imgur.com/eLNCvoF.png'
+            bot.edit_message_media(
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                media=types.InputMediaPhoto(
+                    media=photo, caption=msg_text, parse_mode='HTML'
+                ),
+                reply_markup=markup,
+            )
+        elif call.data.startswith('more'):
+            user_id = call.from_user.id
+            markup = types.InlineKeyboardMarkup()
+            back_to_home = types.InlineKeyboardButton(
+                '↩️ Voltar', callback_data='menu_start'
+            )
+            msg_text = (
+                "<b>📚 Quer facilidade na hora de acessar seus cursos? Então você precisa conhecer o Curso Bot!</b>\n\n"
+                "⭐ <b>Por que o bot é a melhor escolha?</b> ⭐\n"
+                "Usar canais pode ser complicado: eles caem rápido com denúncias, é difícil localizar o curso certo, "
+                "e você pode acabar perdido em vários grupos e canais. Sem falar que é fácil esquecer onde parou ou até perder o curso que queria ver depois.\n\n"
+                "<b>Já o bot Curso (@cursobrbot) oferece várias vantagens incríveis:</b>\n"
+                "• <b>Histórico de assistidos</b>: Você nunca mais vai se perder!\n"
+                "• <b>Favoritar cursos</b>: Marque para assistir mais tarde e acesse com facilidade.\n"
+                "• <b>Assinatura a baixo custo</b>: E com <b>formas de pagamento anônimas</b> – as transações são feitas com as próprias estrelas do Telegram. "
+                "Basta enviar as estrelas e pronto!\n"
+                "• <b>Reembolso garantido</b> pelo próprio Telegram.\n"
+                "• <b>Busca avançada</b>: Encontre cursos por letra, ano ou categoria, tudo de maneira rápida.\n"
+                "• <b>Sistema de indicação</b>: Se um amigo assinar com seu link, você ganha acesso gratuito ao bot!\n"
+                "• <b>Interface simples e intuitiva</b>: Fácil de usar, com vários tutoriais e suporte para dúvidas e pedidos.\n\n"
+                "<b>🌟 Não perca tempo, aproveite todas essas vantagens agora mesmo! Assine o bot Curso e tenha acesso a todos os seus cursos favoritos de forma rápida e prática.</b> 🌟"
+            )
+
+            photo = 'https://i.imgur.com/n6fFGYg.jpeg'
             bot.edit_message_media(
                 chat_id=call.message.chat.id,
                 message_id=call.message.message_id,
