@@ -274,9 +274,10 @@ def callback_handler(call):
                 )
             markup = types.InlineKeyboardMarkup()
             back_to_home = types.InlineKeyboardButton('↩️ Voltar', callback_data='menu_start')
-            pay_button = types.InlineKeyboardButton('💳 Pagar', pay=True)
+            pay_button = types.InlineKeyboardButton(f'Pagar ⭐ {selected_stars}', pay=True)
 
-            markup.add(pay_button, back_to_home)
+
+            markup.add(back_to_home, pay_button)
             bot.send_invoice(
                 call.from_user.id,
                 provider_token=None,  
