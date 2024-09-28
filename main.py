@@ -1039,7 +1039,7 @@ def send_curso_details(message, idnt):
                 keyboard.add(like_button, deslike_button)
             
             temp_total = get_temp_total(idnt)
-            
+
             for temp in range(1, temp_total + 1):
                 text = f"▶️ Temporada {temp}"
                 callback_data = f"EPISODIO= {identificador} {temp}"
@@ -1253,7 +1253,7 @@ def send_curso_details_new(user_id, idnt, chat_id, message_id):
                 star_rating = '⭐️'
 
             photo = curso.get('thumb_nail')
-            temp_total = int(curso.get('temp'))
+            temp = int(curso.get('temp'))
             episodio = 1
 
             caption = (
@@ -1293,6 +1293,7 @@ def send_curso_details_new(user_id, idnt, chat_id, message_id):
                 deslike_button = types.InlineKeyboardButton("👎 Deslike", callback_data=f"ADD_DESLIKE {idnt}")
                 keyboard.append([like_button, deslike_button])
 
+            temp_total = get_temp_total(idnt)
             for episode_num in range(1, temp_total + 1):
                 text = f"▶️ Temporada {episodio}"
                 callback_data = f"EPISODIO= {idnt} {episode_num}"  
@@ -1579,8 +1580,9 @@ def menu_curso_callback(call):
             nome = curso.get('nome')
 
             keyboard = []
-
-            for temp in range(1, temp + 1):
+            
+            temp_total = get_temp_total(idnt)
+            for temp in range(1, temp_total + 1):
                 text = f"▶️ Temporada {temp}"
                 callback_data = f"EPISODIO= {identificador} {temp}"  
                 button = types.InlineKeyboardButton(text, switch_inline_query_current_chat=callback_data)
