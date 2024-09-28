@@ -962,6 +962,17 @@ def search_curso_by_id(idnt):
     result = video_manager.db.videos.find_one({"idnt": str(idnt), "nome": {"$ne": ""}})
     return result
 
+def get_temp_total(idnt):
+    """
+    Retorna o número total de temporadas para um determinado idnt.
+    
+    :param idnt: O identificador do curso.
+    :return: Número total de temporadas (int).
+    """
+    # Obtém os valores distintos de 'temp' para o idnt fornecido
+    temps = video_manager.db.videos.find({'idnt': idnt}).distinct('temp')
+    return len(temps)
+
 def send_curso_details(message, idnt):
     try:
         bot.send_chat_action(message.chat.id, 'upload_photo')
@@ -1027,7 +1038,9 @@ def send_curso_details(message, idnt):
                 )
                 keyboard.add(like_button, deslike_button)
             
-            for temp in range(1, temp + 1):
+            temp_total = get_temp_total(idnt)
+            
+            for temp in range(1, temp_total + 1):
                 text = f"▶️ Temporada {temp}"
                 callback_data = f"EPISODIO= {identificador} {temp}"
                 button = types.InlineKeyboardButton(text, switch_inline_query_current_chat=callback_data)
