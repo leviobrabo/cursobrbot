@@ -240,7 +240,7 @@ def callback_handler(call):
             markup.add(top3, top4)
             markup.add(back_button)
 
-            message_text = f'<b>Filtros de busca</b>\n\nSelecione uma das opções de filtro abaixo:\n\n- <b>Favorito:</b> Tenha seus cursos favoritos de forma simples e rápida. (Pode usar como uma lista de cursos que você quer ver no futuro).\n\n- <b>Ano de lançamento (busca o ano)</b>: Encontre cursos lançados em um ano específico\n- <b>Categoria (busca pelo tipo de Categoria)</b>: Procure cursos pela Categoria, como programacao, portugues, ingles, etc.\n- <b>Primeira letra</b>: Descubra os cursos pela primeira letra.\n- <b>Histórico:</b> Tenha o histórico de último vídeo do curso visto, para facilitar seu acesso.'
+            message_text = f'<b>Filtros de busca</b>\n\nSelecione uma das opções de filtro abaixo:\n\n- <b>Favorito:</b> Tenha seus cursos favoritos de forma simples e rápida. (Pode usar como uma lista de cursos que você quer ver no futuro).\n- <b>Ano de lançamento (busca o ano)</b>: Encontre cursos lançados em um ano específico\n- <b>Categoria (busca pelo tipo de Categoria)</b>: Procure cursos pela Categoria, como programacao, portugues, ingles, etc.\n- <b>Primeira letra</b>: Descubra os cursos pela primeira letra.\n- <b>Histórico:</b> Tenha o histórico de último vídeo do curso visto, para facilitar seu acesso.'
             photo_url = 'https://i.imgur.com/ArmCfsW.png'
 
             categoria_media = telebot.types.InputMediaPhoto(media=photo_url, caption=message_text, parse_mode="HTML")
