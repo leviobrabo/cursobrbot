@@ -20,7 +20,7 @@ class UserManager:
         last_name = str(message.from_user.last_name).replace('None', '')
         username = str(message.from_user.username).replace("None", "")
         initial_date = datetime.now()
-        final_date = initial_date + timedelta(hours=2)
+        final_date = initial_date + timedelta(hours=1)
 
         return self.db.users.insert_one({
             'user_id': message.from_user.id,
