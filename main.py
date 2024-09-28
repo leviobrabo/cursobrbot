@@ -970,7 +970,7 @@ def send_curso_details(message, idnt):
         user_id = message.from_user.id
         bot.delete_message(chat_id=message.chat.id, message_id=message.message_id)
         if curso:   
-            temp = curso.get('temp', 0)
+            temp = int(curso.get('temp', 0))
             if temp is None:
                 temp = 0 
 
