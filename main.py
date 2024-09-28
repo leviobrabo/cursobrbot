@@ -300,7 +300,6 @@ def callback_handler(call):
             photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
             
             photo_sub = 'https://i.imgur.com/bngnGuN.png'
-            photo_erro = 'https://i.imgur.com/fhAOcdi.png'
             if is_premium:
                 markup = types.InlineKeyboardMarkup()
                 back_to_home = types.InlineKeyboardButton(
@@ -320,14 +319,12 @@ def callback_handler(call):
                     "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
                 )
                 bot.send_photo(
-                chat_id=call.from_user.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
-                    media=photo_sub, caption=caption_sub, parse_mode='HTML'
-                ),
-                reply_markup=markup,
-
-            )
+                    chat_id=call.from_user.id,
+                    photo=photo_sub,  
+                    caption=caption_sub,
+                    parse_mode='HTML',
+                    reply_markup=markup
+                )
             else:
                 values_btn = types.InlineKeyboardMarkup()
                 btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
@@ -347,13 +344,12 @@ def callback_handler(call):
                     "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
                 )
                 bot.send_photo(
-                chat_id=call.from_user.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
-                    media=photo_pay, caption=caption_nws, parse_mode='HTML'
-                ),
-                reply_markup=values_btn,
-            )    
+                    chat_id=call.from_user.id,
+                    photo=photo_pay,  
+                    caption=caption_nws,
+                    parse_mode='HTML',
+                    reply_markup=values_btn
+                )   
         elif call.data.startswith('categoria'):
             user_id = call.from_user.id
             markup = types.InlineKeyboardMarkup()
