@@ -266,12 +266,12 @@ def callback_handler(call):
             selected_stars = stars_map[call.data]
             selected_months = months_map[call.data]
             description = (
-                    f"🎉 Obrigado por escolher a assinatura premium de {selected_months} mês(es)!\n\n"
-                    f"Você está adquirindo {selected_stars} estrelas para desbloquear "
-                    f"todos os recursos exclusivos do Curso Bot. Aproveite acesso ilimitado aos cursos, "
-                    "suporte prioritário, e muito mais durante o período da sua assinatura.\n\n"
-                    "💳 <b>Pagamento Seguro:</b> Seu pagamento será processado de forma anônima e segura diretamente pelo Telegram."
-                )
+                f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!\n\n" 
+                f"Você está adquirindo {selected_stars} estrelas para desbloquear "
+                "todos os recursos exclusivos do Curso Bot.\n"
+                "Aproveite acesso ilimitado aos cursos e suporte prioritário durante sua assinatura."
+            )
+
             markup = types.InlineKeyboardMarkup()
             back_to_pay_again = types.InlineKeyboardButton('↩️ Voltar', callback_data='pay_again')
             pay_button = types.InlineKeyboardButton(f'Pagar ⭐{selected_stars}', pay=True)
