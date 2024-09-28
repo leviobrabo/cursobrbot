@@ -232,6 +232,7 @@ def callback_handler(call):
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
                 values_btn.row(btn_150)
+                values_btn.row(btn_termo)
                 values_btn.row(btn_cancel)
 
                 caption_nws = (
