@@ -738,11 +738,8 @@ def inline_query(query):
             match = re.match(r"genero=(\w+)", query_text)
             if match:
                 categoria = str(match.group(1))
-                print(categoria)
                 cursos = searcher.search_by_categoria(categoria)
-                print(f'cursos: {cursos}')
                 results = create_inline_results(cursos)
-                print(f'resultados: {results}')
         elif query_text.startswith("letra="):
             match = re.match(r"letra=(\w)", query_text)
             if match:
