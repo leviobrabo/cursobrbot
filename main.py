@@ -1209,10 +1209,9 @@ def send_curso_details(message, idnt):
                 f"<b>Nome:</b> {curso.get('nome')}\n"
                 f"<b>Lançamento:</b> {curso.get('lanc')}\n"
                 f"<b>Duração:</b> {curso.get('duracao')}\n"
-                f"<b>Categoria:</b> {curso.get('categoria')}\n\n"
-                f"<b>Tamanho:</b> {curso.get('tamanho')}\n\n"
+                f"<b>Categoria:</b> {curso.get('categoria')}\n"
+                f"<b>Tamanho:</b> {curso.get('tamanho')}\n"
                 f"<b>Criador:</b> {curso.get('criado')}\n\n"
-                f"<b>Descrição:</b> {curso.get('description')}"
             )
 
             photo = curso.get('thumb_nail')
@@ -1476,10 +1475,9 @@ def send_curso_details_new(user_id, idnt, chat_id, message_id):
                 f"<b>Nome:</b> {curso.get('nome')}\n"
                 f"<b>Lançamento:</b> {curso.get('lanc')}\n"
                 f"<b>Duração:</b> {curso.get('duracao')}\n"
-                f"<b>Categoria:</b> {curso.get('categoria')}\n\n"
-                f"<b>Tamanho:</b> {curso.get('tamanho')}\n\n"
+                f"<b>Categoria:</b> {curso.get('categoria')}\n"
+                f"<b>Tamanho:</b> {curso.get('tamanho')}\n"
                 f"<b>Criador:</b> {curso.get('criado')}\n\n"
-                f"<b>Descrição:</b> {curso.get('description')}\n\n"
                 f"<b>Recomendação:</b> {star_rating}\n"
                 f"<b>Visualizações:</b> {views}"
             )
@@ -1587,7 +1585,6 @@ def send_eps(message, idnt, temp, episodio):
                     f"<b>Nome:</b> {episodio_data.get('description')}\n"
                     f"<b>Temporada:</b> {episodio_data.get('temp')}\n"
                     f"<b>Episódio:</b> {episodio_data.get('episodio')}\n"
-                    f"<b>Lançamento:</b> {episodio_data.get('lanc')}\n"
                 )
                 video_file_id = episodio_data.get('file_id')
                 keyboard_play = types.InlineKeyboardMarkup(row_width=3)
@@ -1648,7 +1645,6 @@ def send_eps_bottuan(message, idnt, temp, episodio):
                 f"<b>Nome:</b> {episodio_data['description']}\n"
                 f"<b>Temporada:</b> {episodio_data['temp']}\n"
                 f"<b>Episódio:</b> {episodio_data['episodio']}\n"
-                f"<b>Lançamento:</b> {episodio_data['lanc']}\n"
             )
             video_file_id = episodio_data['file_id']
 
@@ -1787,7 +1783,6 @@ def menu_curso_callback(call):
                 f"<b>Categoria:</b> {curso.get('categoria')}\n\n"
                 f"<b>Tamanho:</b> {curso.get('tamanho')}\n\n"
                 f"<b>Criador:</b> {curso.get('criado')}\n\n"
-                f"<b>Descrição:</b> {curso.get('description')}"
             )
 
             photo = curso.get('thumb_nail')
