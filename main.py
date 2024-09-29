@@ -1851,7 +1851,7 @@ def get_idnt(message, curso, file_id):
         curso['idnt'] = idnt
         bot.send_message(message.chat.id, "IDNT não encontrado ou File ID diferente. Vamos adicionar um novo curso.")
         bot.send_message(message.chat.id, "Digite o NOME do curso:")
-        bot.register_next_step_handler(message, get_description_new, curso)
+        bot.register_next_step_handler(message, get_nome_new, curso)
 
 # Quando o IDNT e File ID já existem
 def get_description_existing(message, curso):
