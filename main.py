@@ -1838,7 +1838,7 @@ def cursos_dados(message):
 
 def get_idnt(message, curso, file_id):
     idnt = message.text
-    curso['file_id'] = file_id  # Armazena o file_id no dicionário curso
+    curso['file_id'] = file_id  
 
     curso_existente = video_manager.db.videos.find_one({'idnt': idnt})
     
@@ -1850,7 +1850,7 @@ def get_idnt(message, curso, file_id):
     else:
         curso['idnt'] = idnt
         bot.send_message(message.chat.id, "IDNT não encontrado ou File ID diferente. Vamos adicionar um novo curso.")
-        bot.send_message(message.chat.id, "Digite a descrição do curso:")
+        bot.send_message(message.chat.id, "Digite o NOME do curso:")
         bot.register_next_step_handler(message, get_description_new, curso)
 
 # Quando o IDNT e File ID já existem
@@ -1889,6 +1889,12 @@ def get_thumb_existing(message, curso):
     )
     bot.send_message(message.chat.id, "✅ Dados do curso atualizados com sucesso!")
 
+def get_nome_new(message, curso):
+    nome = message.text
+    curso['nome'] = nome
+    bot.send_message(message.chat.id, "Digite a descrição do curso:")
+    bot.register_next_step_handler(message, get_description_new, curso)
+
 # Quando o IDNT não existe ou o File ID é diferente e estamos adicionando um novo curso
 def get_description_new(message, curso):
     description = message.text
@@ -1910,7 +1916,7 @@ def get_lanc_new(message, curso):
 
 def get_duracao_new(message, curso):
     duracao = message.text
-    curso['duracao'] = int(duracao)
+    curso['duracao'] = duracao
     bot.send_message(message.chat.id, "Digite a temporada do curso:")
     bot.register_next_step_handler(message, get_temp_new, curso)
 
@@ -1941,13 +1947,7 @@ def get_size_new(message, curso):
 def get_criado_new(message, curso):
     criado = message.text
     curso['criado'] = criado
-    bot.send_message(message.chat.id, "Digite o nome do curso:")
-    bot.register_next_step_handler(message, get_nome_new, curso)
-
-def get_nome_new(message, curso):
-    nome = message.text
-    curso['nome'] = nome
-    bot.send_message(message.chat.id, "Digite a URL da thumbnail do curso:")
+    bot.send_message(message.chat.id, "Digite o URL Thumb_nail do curso:")
     bot.register_next_step_handler(message, get_thumb_new, curso)
 
 def get_thumb_new(message, curso):
