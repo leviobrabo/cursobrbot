@@ -1858,13 +1858,7 @@ def get_description_existing(message, curso):
 def get_temp_existing(message, curso):
     temp = message.text
     curso['temp'] = int(temp)
-    bot.send_message(message.chat.id, "Digite o episódio do curso:")
-    bot.register_next_step_handler(message, get_episode_existing, curso)
-
-def get_episode_existing(message, curso):
-    episodio = message.text
-    curso['episodio'] = int(episodio)
-    bot.send_message(message.chat.id, "Digite o tamanho do curso (MB):")
+    bot.send_message(message.chat.id, "Digite o tamanho do curso:")
     bot.register_next_step_handler(message, get_size_existing, curso)
 
 def get_size_existing(message, curso):
