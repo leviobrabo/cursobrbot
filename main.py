@@ -1955,7 +1955,10 @@ def get_thumb_new(message, curso):
     curso['thumb_nail'] = thumb_nail_url
 
     # Adiciona um novo documento no banco de dados
-    video_manager.db.videos.insert_one(curso)
+    video_manager.db.videos.update_one(
+            {'file_id': curso['file_id']},
+            {'$set': curso}
+        )
     bot.send_message(message.chat.id, "✅ Novo curso adicionado com sucesso!")
 
 
