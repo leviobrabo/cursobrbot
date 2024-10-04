@@ -1066,7 +1066,7 @@ def handle_episodio_query(query, query_text, searcher, user):
             return
 
         results = []
-        for index, curso_opens in enumerate(curso_open[:25]):
+        for index, curso_opens in enumerate(curso_open[:25]):  # Limita a 25 itens
             title = curso_opens.get("description")
             result_id = f"curso_open_{curso_opens.get('id')}_{index}"
             episodio = curso_opens.get("episodio")
@@ -1096,6 +1096,7 @@ def handle_episodio_query(query, query_text, searcher, user):
             send_no_results(query)
     else:
         send_invalid_command(query)
+
 
 def handle_historico_query(query, query_text, searcher, user):
     historico = user.get('historico', '')
