@@ -959,23 +959,11 @@ def create_inline_results(cursos: List[Dict]) -> List[types.InlineQueryResultArt
 @bot.inline_handler(lambda query: True)
 def inline_query(query):
     try:
-        if not query.query.strip():
-            result_inicial = types.InlineQueryResultArticle(
-                id="inicial",
-                title="Digite o nome do curso",
-                description="Para encontrar, digite corretamente o nome do curso",
-                input_message_content=types.InputTextMessageContent(
-                    message_text="Exemplo: @cursobrbot Python"
-                ),
-                thumbnail_url="https://i.imgur.com/oCjERKj.png",
-            )
-            bot.answer_inline_query(
-                query.id,
-                [result_inicial],
-                switch_pm_text='Como usar o bot?',
-                switch_pm_parameter='how_to_use',
-                cache_time=0
-            )
+        query_text = query.query.strip()
+        
+        if not query_text:
+            # Handle empty query
+            handle_empty_query(query)
             return
 
         user_id = query.from_user.id
@@ -985,117 +973,211 @@ def inline_query(query):
             user = user_manager.add_user_db(query.from_user)
 
         searcher = CursoSearcher(video_manager)
-        query_text = query.query.strip()
+
+        # Define command handlers
+        command_handlers = {
+            'ano=': handle_ano_query,
+            'genero=': handle_genero_query,
+            'letra=': handle_letra_query,
+            'EPISODIO=': handle_episodio_query,
+            'HISTORICO': handle_historico_query,
+            'FAVORITO': handle_favorito_query,
+        }
+
+        # Check if query_text matches any command prefix
+        for prefix, handler in command_handlers.items():
+            if query_text.startswith(prefix):
+                handler(query, query_text, searcher, user)
+                return
+
+        # Default handler (search by partial name)
+        handle_default_query(query, query_text, searcher)
+
+    except Exception as e:
+        logging.error(f"Erro na consulta inline: {e}")
+        bot.answer_inline_query(query.id, [], cache_time=0)
+
+def handle_empty_query(query):
+    result_inicial = types.InlineQueryResultArticle(
+        id="inicial",
+        title="Digite o nome do curso",
+        description="Para encontrar, digite corretamente o nome do curso",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Exemplo: @cursobrbot Python"
+        ),
+        thumbnail_url="https://i.imgur.com/oCjERKj.png",
+    )
+    bot.answer_inline_query(
+        query.id,
+        [result_inicial],
+        switch_pm_text='Como usar o bot?',
+        switch_pm_parameter='how_to_use',
+        cache_time=0
+    )
+
+def handle_ano_query(query, query_text, searcher, user):
+    match = re.match(r"ano=(\d{4})", query_text)
+    if match:
+        ano = int(match.group(1))
+        cursos = searcher.search_by_year(ano)
+        results = create_inline_results(cursos)
+        if results:
+            bot.answer_inline_query(query.id, results)
+        else:
+            send_no_results(query)
+    else:
+        send_invalid_command(query)
+
+def handle_genero_query(query, query_text, searcher, user):
+    match = re.match(r"genero=(\w+)", query_text)
+    if match:
+        categoria = str(match.group(1))
+        cursos = searcher.search_by_categoria(categoria)
+        results = create_inline_results(cursos)
+        if results:
+            bot.answer_inline_query(query.id, results)
+        else:
+            send_no_results(query)
+    else:
+        send_invalid_command(query)
+
+def handle_letra_query(query, query_text, searcher, user):
+    match = re.match(r"letra=(\w)", query_text)
+    if match:
+        letra = match.group(1)
+        cursos = searcher.search_by_first_letter(letra)
+        results = create_inline_results(cursos)
+        if results:
+            bot.answer_inline_query(query.id, results)
+        else:
+            send_no_results(query)
+    else:
+        send_invalid_command(query)
+
+def handle_episodio_query(query, query_text, searcher, user):
+    match = re.match(r"EPISODIO=\s(.+)\s(\d+)", query_text)
+    if match:
+        identificador = match.group(1)
+        temporada = int(match.group(2))
+        curso_open = searcher.search_by_name_and_season(identificador, temporada)
+
+        if not curso_open:
+            send_course_not_found(query)
+            return
+
         results = []
+        for index, curso_opens in enumerate(curso_open):
+            title = curso_opens.get("description")
+            result_id = f"curso_open_{curso_opens.get('id')}_{index}"
+            episodio = curso_opens.get("episodio")
+            idnt = curso_opens.get("idnt")
+            temp = curso_opens.get("temp")
+            thumbnail_url = curso_opens.get("thumb_nail")
+            assistir = f"EPISODIO={idnt} {temp} {episodio}"
+            description = (
+                f"Temporada: {temp}\n"
+                f"Episódio: {episodio}"
+            )
 
-        if query_text.startswith("ano="):
-            match = re.match(r"ano=(\d{4})", query_text)
-            if match:
-                ano = int(match.group(1))
-                cursos = searcher.search_by_year(ano)
-                results = create_inline_results(cursos)
-        elif query_text.startswith("genero="):
-            match = re.match(r"genero=(\w+)", query_text)
-            if match:
-                categoria = str(match.group(1))
-                cursos = searcher.search_by_categoria(categoria)
-                results = create_inline_results(cursos)
-        elif query_text.startswith("letra="):
-            match = re.match(r"letra=(\w)", query_text)
-            if match:
-                letra = match.group(1)
-                cursos = searcher.search_by_first_letter(letra)
-                results = create_inline_results(cursos)
-        elif query_text.startswith("EPISODIO="):
-            match = re.match(r"EPISODIO=\s(.+)\s(\d+)", query.query)
-            if match:
-                identificador = match.group(1)
-                temporada = int(match.group(2))
-                curso_open = searcher.search_by_name_and_season(identificador, temporada)
+            article_result = types.InlineQueryResultArticle(
+                id=result_id,
+                thumbnail_url=thumbnail_url,
+                title=title,
+                description=description,
+                input_message_content=types.InputTextMessageContent(
+                    message_text=assistir,
+                ),
+            )
+            results.append(article_result)
 
-                if not curso_open:
-                    error_result = types.InlineQueryResultArticle(
-                        id="temporada_nao_encontrada",
-                        title="Curso não encontrado",
-                        description="Clique aqui para saber o motivo",
-                        input_message_content=types.InputTextMessageContent(
-                            message_text="Por favor, tente novamente... Se erro persistir entre em contato com o suporte"
-                        ),
-                        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
-                    )
-                    bot.answer_inline_query(query.id, [error_result])
-                    return
-                
-                results = []
-                index = 0  
-                for index, curso_opens in enumerate(curso_open[:25]):
-                    title = curso_opens.get("description")
-                    result_id = f"curso_open_{curso_opens.get('id')}_{index}"
-                    
-                    episodio = curso_opens.get("episodio")
-                    idnt = curso_opens.get("idnt")
-                    temp = curso_opens.get("temp")
-                    thumbnail_url = curso_opens.get("thumb_nail")
-                    assistir = f"EPISODIO={idnt} {temp} {episodio}"
-                    description = (
-                        f"Temporada: {temp}\n"
-                        f"Episódio: {episodio}"
-                    )
+        if results:
+            bot.answer_inline_query(query.id, results)
+        else:
+            send_no_results(query)
+    else:
+        send_invalid_command(query)
 
-                    article_result = types.InlineQueryResultArticle(
-                        id=result_id,
-                        thumbnail_url=thumbnail_url,
-                        title=title,
-                        description=description,
-                        input_message_content=types.InputTextMessageContent(
-                            message_text=assistir,
-                        ),
-                    )
-                    results.append(article_result)
+def handle_historico_query(query, query_text, searcher, user):
+    historico = user.get('historico', '')
+    
+    if historico:
+        historico_parts = historico.split(' ')
+        if len(historico_parts) == 3:
+            identificador = historico_parts[0]
+            temporada = int(historico_parts[1])
+            episodio = int(historico_parts[2])
 
-                    index += 1 
+            curso = video_manager.db.videos.find_one({
+                "idnt": identificador,
+                "temp": temporada,
+                "episodio": episodio
+            })
 
-                bot.answer_inline_query(query.id, results)
-        elif query_text.startswith("HISTORICO"):
-            user_id = query.from_user.id
-            user = user_manager.search_user(user_id)
-            historico = user.get('historico', '')
-            
-            if historico:
-                historico_parts = historico.split(' ')
-                if len(historico_parts) == 3:
-                    identificador = historico_parts[0]
-                    temporada = int(historico_parts[1])
-                    episodio = int(historico_parts[2])
-                
+            if not curso:
+                send_episode_not_found(query)
+                return
+
+            title = curso.get("description")
+            result_id = f"curso_{curso.get('id')}"
+            thumbnail_url = curso.get("thumb_nail")
+            assistir = f"EPISODIO={identificador} {temporada} {episodio}"
+            description = (
+                f"Temporada: {temporada}\n"
+                f"Episódio: {episodio}"
+            )
+
+            article_result = types.InlineQueryResultArticle(
+                id=result_id,
+                thumbnail_url=thumbnail_url,
+                title=title,
+                description=description,
+                input_message_content=types.InputTextMessageContent(
+                    message_text=assistir,
+                ),
+            )
+            results = [article_result]
+            bot.answer_inline_query(query.id, results)
+        else:
+            send_invalid_historico(query)
+    else:
+        send_empty_historico(query)
+
+def handle_favorito_query(query, query_text, searcher, user):
+    favoritos = user.get('my_fav', [])
+    
+    if favoritos:
+        results = []
+        for index, identificador in enumerate(favoritos[:25]):
+            identificador = identificador.strip()
+            if identificador:
                 curso = video_manager.db.videos.find_one({
                     "idnt": identificador,
-                    "temp": temporada,
-                    "episodio": episodio
                 })
-                
+
                 if not curso:
                     error_result = types.InlineQueryResultArticle(
-                        id="video_nao_encontrado",
-                        title="Episódio não encontrado",
+                        id=f"curso_nao_encontrado_{index}",
+                        title="Curso não encontrado",
                         description="Clique aqui para saber o motivo",
                         input_message_content=types.InputTextMessageContent(
                             message_text="Por favor, tente novamente... Se o erro persistir, entre em contato com o suporte"
                         ),
                         thumbnail_url="https://i.imgur.com/UjaiwTf.png",
                     )
-                    bot.answer_inline_query(query.id, [error_result])
-                    return
-                
+                    results.append(error_result)
+                    continue
+
                 title = curso.get("description")
+                episodio = curso.get("episodio")
+                temporada = curso.get("temp")
                 result_id = f"curso_{curso.get('id')}"
                 thumbnail_url = curso.get("thumb_nail")
-                assistir = f"EPISODIO={identificador} {temporada} {episodio}"
+                assistir = f"ASSISTIR={identificador}"
                 description = (
                     f"Temporada: {temporada}\n"
                     f"Episódio: {episodio}"
                 )
-                
+
                 article_result = types.InlineQueryResultArticle(
                     id=result_id,
                     thumbnail_url=thumbnail_url,
@@ -1105,104 +1187,109 @@ def inline_query(query):
                         message_text=assistir,
                     ),
                 )
-                results = [article_result]
-                bot.answer_inline_query(query.id, results)
-            
+                results.append(article_result)
             else:
-                result_default = types.InlineQueryResultArticle(
-                    id="nenhum_historico",
-                    title="Histórico vazio",
-                    description="Você ainda não assistiu a nenhum episódio.",
-                    input_message_content=types.InputTextMessageContent(
-                        message_text="Seu histórico está vazio."
-                    ),
-                    thumbnail_url="https://i.imgur.com/UjaiwTf.png",
-                )
-                bot.answer_inline_query(query.id, [result_default], cache_time=0)
-        elif query_text.startswith("FAVORITO"):
-            user_id = query.from_user.id
-            user = user_manager.search_user(user_id)
-            favoritos = user.get('my_fav', [])
-            
-            if favoritos:
-                results = []
-                for index, fav in enumerate(favoritos[:25]):
-                    identificador = fav.strip()  
-                    if identificador:
-                        curso = video_manager.db.videos.find_one({
-                            "idnt": identificador,
-                        })
-                
-                        if not curso:
-                            error_result = types.InlineQueryResultArticle(
-                                id=f"video_nao_encontrado_{index}",
-                                title="Curso não encontrado",
-                                description="Clique aqui para saber o motivo",
-                                input_message_content=types.InputTextMessageContent(
-                                    message_text="Por favor, tente novamente... Se o erro persistir, entre em contato com o suporte"
-                                ),
-                                thumbnail_url="https://i.imgur.com/UjaiwTf.png",
-                            )
-                            results.append(error_result)
-                            continue
-                        
-                        title = curso.get("description")
-                        episodio = curso.get("episodio")
-                        temporada = curso.get("temp")
-                        result_id = f"curso_{curso.get('id')}"
-                        thumbnail_url = curso.get("thumb_nail")
-                        assistir = f"ASSISTIR={identificador}"
-                        description = (
-                            f"Temporada: {temporada}\n"
-                            f"Episódio: {episodio}"
-                        )
-                        
-                        article_result = types.InlineQueryResultArticle(
-                            id=result_id,
-                            thumbnail_url=thumbnail_url,
-                            title=title,
-                            description=description,
-                            input_message_content=types.InputTextMessageContent(
-                                message_text=assistir,
-                            ),
-                        )
-                        results.append(article_result)
-                        bot.answer_inline_query(query.id, results)
-                    
-                    else:
-                        result_default = types.InlineQueryResultArticle(
-                            id="nenhum_favorito",
-                            title="Você não possui cursos favoritados",
-                            description="Você ainda não favoritou nenhum episódio.",
-                            input_message_content=types.InputTextMessageContent(
-                                message_text="Seu favorito está vazio. Escolha algum curso e clique em adiconar ao favoritos"
-                            ),
-                            thumbnail_url="https://i.imgur.com/UjaiwTf.png",
-                        )
-                        bot.answer_inline_query(query.id, [result_default], cache_time=0)
-
-        else:
-            cursos = searcher.search_by_partial_name(query_text)
-            results = create_inline_results(cursos)
+                continue  # Skip empty identifiers
 
         if results:
             bot.answer_inline_query(query.id, results)
         else:
-            result_default = types.InlineQueryResultArticle(
-                id="nenhum",
-                title="Nenhum resultado encontrado",
-                description="Tente outro termo de busca",
-                input_message_content=types.InputTextMessageContent(
-                    message_text="Nenhum curso encontrado para a sua busca."
-                ),
-                thumbnail_url="https://i.imgur.com/UjaiwTf.png",
-            )
-            bot.answer_inline_query(query.id, [result_default], cache_time=0)
+            send_empty_favoritos(query)
+    else:
+        send_empty_favoritos(query)
 
-    except Exception as e:
-        logging.error(f"Erro na consulta inline: {e}")
-        bot.answer_inline_query(query.id, [], cache_time=0)
+def handle_default_query(query, query_text, searcher):
+    cursos = searcher.search_by_partial_name(query_text)
+    results = create_inline_results(cursos)
+    if results:
+        bot.answer_inline_query(query.id, results)
+    else:
+        send_no_results(query)
 
+# Funções auxiliares para mensagens de erro e resultados vazios
+def send_no_results(query):
+    result_default = types.InlineQueryResultArticle(
+        id="nenhum",
+        title="Nenhum resultado encontrado",
+        description="Tente outro termo de busca",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Nenhum curso encontrado para a sua busca."
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [result_default], cache_time=0)
+
+def send_invalid_command(query):
+    error_result = types.InlineQueryResultArticle(
+        id="comando_invalido",
+        title="Comando inválido",
+        description="Verifique o comando e tente novamente",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Comando inválido. Por favor, tente novamente."
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [error_result], cache_time=0)
+
+def send_course_not_found(query):
+    error_result = types.InlineQueryResultArticle(
+        id="curso_nao_encontrado",
+        title="Curso não encontrado",
+        description="Clique aqui para saber o motivo",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Por favor, tente novamente... Se o erro persistir, entre em contato com o suporte"
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [error_result])
+
+def send_episode_not_found(query):
+    error_result = types.InlineQueryResultArticle(
+        id="episodio_nao_encontrado",
+        title="Episódio não encontrado",
+        description="Clique aqui para saber o motivo",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Por favor, tente novamente... Se o erro persistir, entre em contato com o suporte"
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [error_result])
+
+def send_invalid_historico(query):
+    error_result = types.InlineQueryResultArticle(
+        id="historico_invalido",
+        title="Histórico inválido",
+        description="Não foi possível interpretar o seu histórico",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Histórico inválido. Por favor, tente novamente."
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [error_result])
+
+def send_empty_historico(query):
+    result_default = types.InlineQueryResultArticle(
+        id="nenhum_historico",
+        title="Histórico vazio",
+        description="Você ainda não assistiu a nenhum episódio.",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Seu histórico está vazio."
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [result_default], cache_time=0)
+
+def send_empty_favoritos(query):
+    result_default = types.InlineQueryResultArticle(
+        id="nenhum_favorito",
+        title="Você não possui cursos favoritados",
+        description="Você ainda não favoritou nenhum episódio.",
+        input_message_content=types.InputTextMessageContent(
+            message_text="Seu favorito está vazio. Escolha algum curso e clique em adicionar aos favoritos"
+        ),
+        thumbnail_url="https://i.imgur.com/UjaiwTf.png",
+    )
+    bot.answer_inline_query(query.id, [result_default], cache_time=0)
 
 @bot.message_handler(func=lambda message: message.text.startswith("ASSISTIR="))
 def handle_assistir_command(message):
