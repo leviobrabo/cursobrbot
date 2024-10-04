@@ -1055,9 +1055,9 @@ def handle_letra_query(query, query_text, searcher, user):
         send_invalid_command(query)
 
 def handle_episodio_query(query, query_text, searcher, user):
-    match = re.match(r"EPISODIO=\s(.+)\s(\d+)", query_text)
+    match = re.match(r"EPISODIO=\s*(.+)\s+(\d+)", query_text)
     if match:
-        identificador = match.group(1)
+        identificador = match.group(1).strip()
         temporada = int(match.group(2))
         curso_open = searcher.search_by_name_and_season(identificador, temporada)
 
@@ -1066,12 +1066,19 @@ def handle_episodio_query(query, query_text, searcher, user):
             return
 
         # Implementação da paginação
-        offset = int(query.offset) if query.offset else 0
+        try:
+            offset = int(query.offset) if query.offset else 0
+        except ValueError:
+            offset = 0
+
         limit = 25
         next_offset = offset + limit
 
+        # Obter os resultados de acordo com o offset e o limite
+        paginated_cursos = curso_open[offset:offset+limit]
+
         results = []
-        for index, curso_opens in enumerate(curso_open[offset:offset+limit], start=offset):
+        for index, curso_opens in enumerate(paginated_cursos, start=offset):
             title = curso_opens.get("description")
             result_id = f"curso_open_{curso_opens.get('id')}_{index}"
             episodio = curso_opens.get("episodio")
@@ -1099,9 +1106,11 @@ def handle_episodio_query(query, query_text, searcher, user):
         if len(curso_open) > next_offset:
             bot.answer_inline_query(query.id, results, next_offset=str(next_offset))
         else:
-            bot.answer_inline_query(query.id, results)
+            bot.answer_inline_query(query.id, results, next_offset='')
+
     else:
         send_invalid_command(query)
+
 
 
 def handle_historico_query(query, query_text, searcher, user):
