@@ -129,7 +129,7 @@ def cmd_start(message):
         if indicado:
             conta_vinculada_texto = f"<b>• Conta vinculada:</b> <code>{indicado}</code>\n"
         else:
-            conta_vinculada_texto = "<b>• Conta vinculada:</b> <code>Você não tem conta vinculada</code>\n"
+            conta_vinculada_texto = "<b>• Conta vinculada:</b> <code>Você não é vinculado a nenhuma conta</code>\n"
 
         total_videos = video_manager.count_unique_idnt()
         category_list_text = f"<b>• Cursos:</b> {total_videos}"
