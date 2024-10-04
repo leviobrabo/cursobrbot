@@ -1065,8 +1065,13 @@ def handle_episodio_query(query, query_text, searcher, user):
             send_course_not_found(query)
             return
 
+        # Implementação da paginação
+        offset = int(query.offset) if query.offset else 0
+        limit = 25
+        next_offset = offset + limit
+
         results = []
-        for index, curso_opens in enumerate(curso_open[:25]):  # Limita a 25 itens
+        for index, curso_opens in enumerate(curso_open[offset:offset+limit], start=offset):
             title = curso_opens.get("description")
             result_id = f"curso_open_{curso_opens.get('id')}_{index}"
             episodio = curso_opens.get("episodio")
@@ -1090,10 +1095,11 @@ def handle_episodio_query(query, query_text, searcher, user):
             )
             results.append(article_result)
 
-        if results:
-            bot.answer_inline_query(query.id, results)
+        # Verifica se há mais resultados para fornecer o next_offset
+        if len(curso_open) > next_offset:
+            bot.answer_inline_query(query.id, results, next_offset=str(next_offset))
         else:
-            send_no_results(query)
+            bot.answer_inline_query(query.id, results)
     else:
         send_invalid_command(query)
 
