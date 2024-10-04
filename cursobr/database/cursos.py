@@ -1,5 +1,6 @@
 from ..database.db_connection import DBConnection
 import re
+from ..loggers import logging
 
 class VideoManager:
     """Classe responsável por gerenciar a coleção de vídeos no banco de dados."""
@@ -92,3 +93,23 @@ class VideoManager:
         """Conta o número de idnt distintos no banco de dados."""
         unique_idnt_count = len(self.db.videos.distinct('idnt'))
         return unique_idnt_count
+
+    def update_curso(self, idnt, update_fields):
+        """
+        Atualiza os campos de um curso no banco de dados.
+
+        Args:
+            idnt (str): Identificador único do curso.
+            update_fields (dict): Campos a serem atualizados com seus novos valores.
+        """
+        try:
+            result = self.db.videos.update_one(
+                {'idnt': idnt},
+                {'$set': update_fields}
+            )
+            if result.matched_count == 0:
+                logging.warning(f"Nenhum curso encontrado para o idnt {idnt}")
+            elif result.modified_count == 0:
+                logging.warning(f"Nenhuma atualização realizada para o curso {idnt}")
+        except Exception as e:
+            logging.error(f"Erro ao atualizar o curso {idnt}: {e}")
