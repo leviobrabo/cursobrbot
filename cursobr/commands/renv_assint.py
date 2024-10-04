@@ -33,10 +33,17 @@ def renovar_assinatura(message):
         markup.row(btn_cancel)
         photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
 
+        caption_nws = (
+                    "⭐️ <b>Escolha seu plano de assinatura:</b>\n\n"
+                    "Com a assinatura premium, você terá acesso ilimitado a todos os cursos, "
+                    "suporte prioritário e a possibilidade de favoritar seus cursos preferidos. "
+                    "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
+                    "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
+                )
         bot.send_photo(
             user_id,
             photo=photo_pay, 
-            caption="Escolha uma das opções abaixo para renovar sua assinatura:",
+            caption=caption_nws,
             parse_mode='HTML',
             reply_markup=markup
         )
