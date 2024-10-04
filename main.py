@@ -684,36 +684,56 @@ def checkout(pre_checkout_query):
 
 def verificar_assinaturas():
     try:
-        current_datetime = datetime.now().strftime('%Y-%m-%d %H:%M:%S')  
-        users = user_manager.get_all_users()  
-            
+        current_datetime = datetime.now()
+        current_date = current_datetime.date()
+        users = user_manager.get_all_users()
+        logging.info("Iniciando verificação de assinaturas...")
+
         for user in users:
-            final_date = user.get('final_date')
-                
-            if final_date:
-                final_datetime = datetime.strptime(final_date, '%Y-%m-%d %H:%M:%S')
+            final_date_str = user.get('final_date')
+            user_id = user.get('user_id')
 
-                notify_datetime = final_datetime - timedelta(days=1)
+            if final_date_str:
+                try:
+                    final_datetime = datetime.strptime(final_date_str, '%Y-%m-%d %H:%M:%S')
+                    final_date = final_datetime.date()
+                except ValueError:
+                    logging.error(f"Formato de data inválido para o usuário {user_id}: {final_date_str}")
+                    continue
 
-                if notify_datetime.strftime('%Y-%m-%d %H:%M:%S') == current_datetime:
+                notify_date = final_date - timedelta(days=1)
+
+                # Notificar 1 dia antes
+                if notify_date == current_date:
+                    try:
                         bot.send_message(
-                            user['user_id'],
+                            user_id,
                             "Sua assinatura está expirando em 24 horas. Por favor, renove amanhã para continuar utilizando nossos serviços."
-                        )    
+                        )
+                        logging.info(f"Notificação enviada para o usuário {user_id} sobre expiração em 24 horas.")
+                    except Exception as e:
+                        logging.error(f"Erro ao enviar notificação para o usuário {user_id}: {e}")
 
-                elif final_datetime == current_datetime:
-                        user_manager.update_user_info(user['user_id'], 'premium', 'false')
-                        user_manager.update_user_info(user['user_id'], 'initial_date', '')
-                        user_manager.update_user_info(user['user_id'], 'final_date', '')
+                # Verificar se a assinatura expirou
+                elif final_date <= current_date:
+                    try:
+                        user_manager.update_user_info(user_id, 'premium', 'false')
+                        user_manager.update_user_info(user_id, 'initial_date', '')
+                        user_manager.update_user_info(user_id, 'final_date', '')
                         bot.send_message(
-                            user['user_id'],
+                            user_id,
                             "Sua assinatura expirou. Renove-a no botão Assinaturas ou /renovar_assinatura para continuar tendo acesso ao sistema e não perder os novos lançamentos."
                         )
-
+                        logging.info(f"Assinatura expirou para o usuário {user_id}. Informações atualizadas.")
+                    except Exception as e:
+                        logging.error(f"Erro ao atualizar assinatura para o usuário {user_id}: {e}")
                 else:
-                        pass
+                    logging.debug(f"Usuário {user_id} não precisa de ação hoje.")
+            else:
+                logging.debug(f"Usuário {user_id} não possui 'final_date'.")
     except Exception as e:
-        logging.error(f'Erro ao verificar o pagamento: {e}')
+        logging.error(f'Erro ao verificar assinaturas: {e}')
+
 
 @bot.message_handler(commands=['add_fav'])
 def choose_favorite_category(message):
@@ -1959,7 +1979,7 @@ def schedule_checker():
 
 if __name__ == "__main__":
     logging.info("Bot iniciado...")
-    schedule.every().second.do(verificar_assinaturas)
+    schedule.every().day.at("12:30").do(verificar_assinaturas)
     schedule.every().sunday.at("10:11").do(send_recommendations)
     scheduler_thread = threading.Thread(target=schedule_checker)
     scheduler_thread.daemon = True
@@ -1972,3 +1992,4 @@ if __name__ == "__main__":
         )
     
     bot.infinity_polling(allowed_updates=util.update_types)
+    logging.info("BOT INICIADO COM SUCESSO")
