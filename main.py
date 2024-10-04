@@ -1233,6 +1233,25 @@ def get_temp_total(idnt):
     temps = video_manager.db.videos.find({'idnt': idnt}).distinct('temp')
     return len(temps)
 
+def increment_curso_view(idnt):
+    """
+    Incrementa o contador de visualizações de um curso no banco de dados.
+
+    Args:
+        idnt (str): Identificador único do curso.
+    """
+    try:
+        curso = search_curso_by_id(idnt)
+        if curso:
+            current_views = int(curso.get('view', 0))
+            new_views = current_views + 1
+            video_manager.update_curso(idnt, {'view': new_views})
+        else:
+            pass
+    except Exception as e:
+        logging.error(f"Erro ao incrementar visualizações para o curso {idnt}: {e}")
+
+
 def send_curso_details(message, idnt):
     try:
         bot.send_chat_action(message.chat.id, 'upload_photo')
@@ -1325,6 +1344,7 @@ def send_curso_details(message, idnt):
             )
 
             bot.send_photo(chat_id=message.chat.id, photo=photo, caption=caption, parse_mode="HTML", reply_markup=keyboard)
+            increment_curso_view(idnt)
         else:
             bot.answer_callback_query(message.chat.id, text="Formato incorreto. Use 'ASSISTIR={idnt}' para buscar um curso.", show_alert=True)
     except Exception as e:
@@ -2003,8 +2023,8 @@ def schedule_checker():
 
 if __name__ == "__main__":
     logging.info("Bot iniciado...")
-    schedule.every().day.at("12:35").do(verificar_assinaturas)
-    schedule.every().sunday.at("10:11").do(send_recommendations)
+    schedule.every().day.at("00:00").do(verificar_assinaturas)
+    schedule.every().sunday.at("18:00").do(send_recommendations)
     scheduler_thread = threading.Thread(target=schedule_checker)
     scheduler_thread.daemon = True
     scheduler_thread.start()
