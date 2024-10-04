@@ -1066,7 +1066,7 @@ def handle_episodio_query(query, query_text, searcher, user):
             return
 
         results = []
-        for index, curso_opens in enumerate(curso_open):
+        for index, curso_opens in enumerate(curso_open[:25]):
             title = curso_opens.get("description")
             result_id = f"curso_open_{curso_opens.get('id')}_{index}"
             episodio = curso_opens.get("episodio")
@@ -1096,79 +1096,49 @@ def handle_episodio_query(query, query_text, searcher, user):
             send_no_results(query)
     else:
         send_invalid_command(query)
+
 def handle_historico_query(query, query_text, searcher, user):
     historico = user.get('historico', '')
     
     if historico:
-        # Supondo que o histórico seja uma string com entradas separadas por ';'
-        historico_entries = historico.strip().split(';')
+        historico_parts = historico.split(' ')
+        if len(historico_parts) == 3:
+            identificador = historico_parts[0]
+            temporada = int(historico_parts[1])
+            episodio = int(historico_parts[2])
 
-        # Obter o offset da consulta; se não houver, começa em 0
-        offset = int(query.offset) if query.offset else 0
+            curso = video_manager.db.videos.find_one({
+                "idnt": identificador,
+                "temp": temporada,
+                "episodio": episodio
+            })
 
-        # Definir o limite de resultados por página
-        limit = 25
+            if not curso:
+                send_episode_not_found(query)
+                return
 
-        # Selecionar as entradas para a página atual
-        page_entries = historico_entries[offset:offset + limit]
+            title = curso.get("description")
+            result_id = f"curso_{curso.get('id')}"
+            thumbnail_url = curso.get("thumb_nail")
+            assistir = f"EPISODIO={identificador} {temporada} {episodio}"
+            description = (
+                f"Temporada: {temporada}\n"
+                f"Episódio: {episodio}"
+            )
 
-        results = []
-        for index, hist in enumerate(page_entries):
-            hist = hist.strip()
-            if not hist:
-                continue  # Pula entradas vazias
-
-            historico_parts = hist.split(' ')
-            if len(historico_parts) == 3:
-                identificador = historico_parts[0]
-                try:
-                    temporada = int(historico_parts[1])
-                    episodio = int(historico_parts[2])
-                except ValueError:
-                    continue  # Pula entradas inválidas
-
-                curso = video_manager.db.videos.find_one({
-                    "idnt": identificador,
-                    "temp": temporada,
-                    "episodio": episodio
-                })
-
-                if not curso:
-                    continue  # Pula se o curso não for encontrado
-
-                title = curso.get("description")
-                result_id = f"curso_{curso.get('id')}_{offset + index}"
-                thumbnail_url = curso.get("thumb_nail")
-                assistir = f"EPISODIO={identificador} {temporada} {episodio}"
-                description = (
-                    f"Temporada: {temporada}\n"
-                    f"Episódio: {episodio}"
-                )
-
-                article_result = types.InlineQueryResultArticle(
-                    id=result_id,
-                    thumbnail_url=thumbnail_url,
-                    title=title,
-                    description=description,
-                    input_message_content=types.InputTextMessageContent(
-                        message_text=assistir,
-                    ),
-                )
-                results.append(article_result)
-            else:
-                continue  # Pula entradas inválidas
-
-        # Verifica se há mais resultados para paginar
-        total_entries = len(historico_entries)
-        if (offset + limit) < total_entries:
-            next_offset = str(offset + limit)
+            article_result = types.InlineQueryResultArticle(
+                id=result_id,
+                thumbnail_url=thumbnail_url,
+                title=title,
+                description=description,
+                input_message_content=types.InputTextMessageContent(
+                    message_text=assistir,
+                ),
+            )
+            results = [article_result]
+            bot.answer_inline_query(query.id, results)
         else:
-            next_offset = ''
-
-        if results:
-            bot.answer_inline_query(query.id, results, next_offset=next_offset)
-        else:
-            send_no_results(query)
+            send_invalid_historico(query)
     else:
         send_empty_historico(query)
 
