@@ -1028,7 +1028,7 @@ def inline_query(query):
                 
                 results = []
                 index = 0  
-                for curso_opens in curso_open:
+                for index, curso_opens in enumerate(curso_open[:25]):
                     title = curso_opens.get("description")
                     result_id = f"curso_open_{curso_opens.get('id')}_{index}"
                     
@@ -1126,8 +1126,8 @@ def inline_query(query):
             
             if favoritos:
                 results = []
-                for fav in favoritos:
-                    identificador = fav.strip()  # Remove espaços em branco extras
+                for index, fav in enumerate(favoritos[:25]):
+                    identificador = fav.strip()  
                     if identificador:
                         curso = video_manager.db.videos.find_one({
                             "idnt": identificador,
@@ -1135,7 +1135,7 @@ def inline_query(query):
                 
                         if not curso:
                             error_result = types.InlineQueryResultArticle(
-                                id="video_nao_encontrado",
+                                id=f"video_nao_encontrado_{index}",
                                 title="Curso não encontrado",
                                 description="Clique aqui para saber o motivo",
                                 input_message_content=types.InputTextMessageContent(
@@ -1143,8 +1143,8 @@ def inline_query(query):
                                 ),
                                 thumbnail_url="https://i.imgur.com/UjaiwTf.png",
                             )
-                            bot.answer_inline_query(query.id, [error_result])
-                            return
+                            results.append(error_result)
+                            continue
                         
                         title = curso.get("description")
                         episodio = curso.get("episodio")
@@ -1166,7 +1166,7 @@ def inline_query(query):
                                 message_text=assistir,
                             ),
                         )
-                        results = [article_result]
+                        results.append(article_result)
                         bot.answer_inline_query(query.id, results)
                     
                     else:
