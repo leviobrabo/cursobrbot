@@ -115,18 +115,42 @@ def callback_handler(call):
             markup.add(config_pv)
 
             photo = "https://i.imgur.com/q16rY8x.png"
-            final_date = user.get("final_date", "")
+            final_date_str = user.get("final_date", "")
             indicado = user.get("indicado", "")
+            current_datetime = datetime.now()
 
-            if final_date:
-                expiracao_texto = f"<b>• Expiração:</b> <code>{final_date}</code>\n\n"
+            if final_date_str:
+                try:
+                    final_datetime = datetime.strptime(final_date_str, '%Y-%m-%d %H:%M:%S')
+                    
+                    time_diff = final_datetime - current_datetime
+                    
+                    if time_diff.total_seconds() <= 0:
+                        expiracao_texto = "<b>• Expiração:</b> <code>Assinatura Expirada</code>\n\n"
+                    else:
+                        days = time_diff.days
+                        seconds = time_diff.seconds
+                        hours = seconds // 3600
+                        minutes = (seconds % 3600) // 60
+                        seconds = seconds % 60
+                        
+                        if days > 0:
+                            expiracao_texto = f"<b>• Expiração:</b> Faltam <code>{days} dia{'s' if days != 1 else ''}</code> para expirar.\n\n"
+                        elif hours > 0:
+                            expiracao_texto = f"<b>• Expiração:</b> Faltam <code>{hours} hora{'s' if hours != 1 else ''}</code> para expirar.\n\n"
+                        elif minutes > 0:
+                            expiracao_texto = f"<b>• Expiração:</b> Faltam <code>{minutes} minuto{'s' if minutes != 1 else ''}</code> para expirar.\n\n"
+                        else:
+                            expiracao_texto = f"<b>• Expiração:</b> Faltam <code>{seconds} segundo{'s' if seconds != 1 else ''}</code> para expirar.\n\n"
+                except ValueError:
+                    expiracao_texto = "<b>• Expiração:</b> <code>Formato de data inválido</code>\n\n"
             else:
                 expiracao_texto = "<b>• Expiração:</b> <code>Sem assinatura ativa</code>\n\n"
 
             if indicado:
                 conta_vinculada_texto = f"<b>• Conta vinculada:</b> <code>{indicado}</code>\n"
             else:
-                conta_vinculada_texto = "<b>• Conta vinculada:</b> <code>Não tem</code>\n"
+                conta_vinculada_texto = "<b>• Conta vinculada:</b> <code>Você não tem conta vinculada</code>\n"
 
             total_videos = video_manager.count_unique_idnt()
             category_list_text = f"<b>• Cursos:</b> {total_videos}"
