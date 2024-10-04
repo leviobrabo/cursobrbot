@@ -24,10 +24,12 @@ def renovar_assinatura(message):
         btn_50 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 1 Mês', callback_data="100_estrelas")
         btn_100 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 2 Meses', callback_data="200_estrelas")
         btn_150 = types.InlineKeyboardButton('⭐️ 350 Estrelas - 3 Meses', callback_data="350_estrelas")
+        btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
         btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
         markup.row(btn_50)
         markup.row(btn_100)
         markup.row(btn_150)
+        markup.row(btn_termo)
         markup.row(btn_cancel)
         photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
 
