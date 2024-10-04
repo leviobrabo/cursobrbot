@@ -379,9 +379,9 @@ def callback_handler(call):
         elif call.data.startswith('categoria'):
             user_id = call.from_user.id
             markup = types.InlineKeyboardMarkup()
-            top1 = types.InlineKeyboardButton("📅 Ano de lançamento", switch_inline_query_current_chat="ano=2023")
-            top2 = types.InlineKeyboardButton("🎭 Categoria", switch_inline_query_current_chat="genero=Programação")
-            top3 = types.InlineKeyboardButton("📝 Primeira letra do curso", switch_inline_query_current_chat="letra=curso")
+            top1 = types.InlineKeyboardButton("📅 Ano de lançamento", switch_inline_query_current_chat="ano=2021")
+            top2 = types.InlineKeyboardButton("🎭 Categoria", switch_inline_query_current_chat="genero=Python")
+            top3 = types.InlineKeyboardButton("📝 Primeira letra do curso", switch_inline_query_current_chat="letra=c")
             top4 = types.InlineKeyboardButton("💾 Histórico", switch_inline_query_current_chat="HISTORICO")
             top5 = types.InlineKeyboardButton("❤️ Favorito", switch_inline_query_current_chat="FAVORITO")
             back_button = telebot.types.InlineKeyboardButton(text="↩️ Voltar", callback_data="menu_start")
