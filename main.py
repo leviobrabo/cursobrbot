@@ -1979,7 +1979,7 @@ def schedule_checker():
 
 if __name__ == "__main__":
     logging.info("Bot iniciado...")
-    schedule.every().day.at("12:30").do(verificar_assinaturas)
+    schedule.every().day.at("12:35").do(verificar_assinaturas)
     schedule.every().sunday.at("10:11").do(send_recommendations)
     scheduler_thread = threading.Thread(target=schedule_checker)
     scheduler_thread.daemon = True
