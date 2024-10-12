@@ -2137,5 +2137,5 @@ if __name__ == "__main__":
             message_thread_id=43147,
         )
     
-    bot.infinity_polling(allowed_updates=util.update_types, timeout=123)
+    bot.infinity_polling(allowed_updates=util.update_types, timeout=10, long_polling_timeout = 5)
     logging.info("BOT INICIADO COM SUCESSO")
