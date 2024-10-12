@@ -148,13 +148,11 @@ def cmd_start(message):
             f"<a href='https://t.me/kylorensbot'>• Falar com o suporte</a>"
         )
 
-        bot.send_photo(
-            message.chat.id,
-            photo=photo,
-            caption=msg_start,
-            reply_markup=markup,
-            parse_mode='HTML'
-        )
-
+        bot.send_message(
+        message.chat.id,
+        msg_start,
+        reply_markup=markup,
+        parse_mode='HTML'
+    )
     except Exception as e:
         logging.error(f"Erro ao enviar o start: {e}")
