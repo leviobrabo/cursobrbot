@@ -147,14 +147,15 @@ def cmd_start(message):
             f"<a href='https://telegra.ph/Como-utilizar-filtros-09-22'>• Como pesquisar?</a>\n"
             f"<a href='https://t.me/kylorensbot'>• Falar com o suporte</a>"
         )
-        photo_start = "https://i.imgur.com/q16rY8x.png"
-        bot.send_photo(
-            message.chat.id,
-            photo=photo_start,
-            caption=msg_start,
-            reply_markup=markup,
-            parse_mode='HTML'
-        )
+        with open('cursobr/assets/q16rY8x.png', 'rb') as photo_file:
+            bot.send_photo(
+                message.chat.id,
+                photo=photo_file,
+                caption=msg_start,
+                reply_markup=markup,
+                parse_mode='HTML'
+            )
+
 
     except Exception as e:
         logging.error(f"Erro ao enviar o start: {e}")
