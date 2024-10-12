@@ -30,12 +30,12 @@ def cmd_help(message):
             markup.add(commands)
             markup.add(suppport, doacao)
 
-            photo = "https://i.imgur.com/q16rY8x.png"
-            bot.send_photo(
-                message.chat.id,
-                photo=photo,
-                caption=text,
-                reply_markup=markup,
-            )
+            with open('cursobr/assets/q16rY8x.png', 'rb') as photo_file:
+                bot.send_photo(
+                    message.chat.id,
+                    photo=photo_file,
+                    caption=text,
+                    reply_markup=markup,
+                )
     except Exception as e:
         logging.error(f"Erro ao enviar o help: {e}")
