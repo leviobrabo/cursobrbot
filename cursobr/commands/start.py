@@ -93,7 +93,7 @@ def cmd_start(message):
         markup.add(indicacao, categoria)
         markup.add(config_pv)
 
-        photo = "https://i.imgur.com/q16rY8x.png"
+        
         final_date_str = user.get("final_date", "")
         indicado = user.get("indicado", "")
         current_datetime = datetime.now()
@@ -147,12 +147,14 @@ def cmd_start(message):
             f"<a href='https://telegra.ph/Como-utilizar-filtros-09-22'>• Como pesquisar?</a>\n"
             f"<a href='https://t.me/kylorensbot'>• Falar com o suporte</a>"
         )
+        photo_start = "https://i.imgur.com/q16rY8x.png"
+        bot.send_photo(
+            message.chat.id,
+            photo=photo_start,
+            caption=msg_start,
+            reply_markup=markup,
+            parse_mode='HTML'
+        )
 
-        bot.send_message(
-        message.chat.id,
-        msg_start,
-        reply_markup=markup,
-        parse_mode='HTML'
-    )
     except Exception as e:
         logging.error(f"Erro ao enviar o start: {e}")
