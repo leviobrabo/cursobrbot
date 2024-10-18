@@ -2045,7 +2045,7 @@ def get_episode_existing(message, curso):
     curso_atualizado = video_manager.db.videos.find_one({'file_id': curso['file_id']})
     curso_info = (
         f"📚 <b>Curso Atualizado com Sucesso!</b>\n\n"
-        f"<b>IDNT:</b> {curso_atualizado['idnt']}\n"
+        f"<b>IDNT:</b> <code>{curso_atualizado['idnt']}</code>\n"
         f"<b>Nome:</b> {curso_atualizado['nome']}\n"
         f"<b>Descrição:</b> {curso_atualizado['description']}\n"
         f"<b>Temporada:</b> {curso_atualizado['temp']}\n"
@@ -2137,7 +2137,7 @@ def get_thumb_new(message, curso):
     curso_atualizado = video_manager.db.videos.find_one({'file_id': curso['file_id']})
     curso_info = (
         f"📚 <b>Curso Atualizado com Sucesso!</b>\n\n"
-        f"<b>IDNT:</b> {curso_atualizado['idnt']}\n"
+        f"<b>IDNT:</b> <code>{curso_atualizado['idnt']}</code>\n"
         f"<b>Nome:</b> {curso_atualizado['nome']}\n"
         f"<b>Descrição:</b> {curso_atualizado['description']}\n"
         f"<b>Temporada:</b> {curso_atualizado['temp']}\n"
