@@ -2042,7 +2042,26 @@ def get_episode_existing(message, curso):
         {'file_id': curso['file_id']},
         {'$set': curso, }
     )
-    bot.send_message(message.chat.id, "✅ Dados do curso atualizados com sucesso!")
+    curso_atualizado = video_manager.db.videos.find_one({'file_id': curso['file_id']})
+    curso_info = (
+        f"📚 <b>Curso Atualizado com Sucesso!</b>\n\n"
+        f"<b>IDNT:</b> {curso_atualizado['idnt']}\n"
+        f"<b>Nome:</b> {curso_atualizado['nome']}\n"
+        f"<b>Descrição:</b> {curso_atualizado['description']}\n"
+        f"<b>Temporada:</b> {curso_atualizado['temp']}\n"
+        f"<b>Episódio:</b> {curso_atualizado['episodio']}\n"
+        f"<b>Total de Vídeos:</b> {curso_atualizado.get('video_total', 'N/A')}\n"
+        f"<b>Data de Lançamento:</b> {curso_atualizado.get('lanc', 'N/A')}\n"
+        f"<b>Duração:</b> {curso_atualizado.get('duracao', 'N/A')}\n"
+        f"<b>Categoria:</b> {curso_atualizado.get('categoria', 'N/A')}\n"
+        f"<b>Tamanho:</b> {curso_atualizado.get('tamanho', 'N/A')} MB\n"
+        f"<b>Criado por:</b> {curso_atualizado.get('criado', 'N/A')}\n"
+        f"<b>Visualizações:</b> {curso_atualizado.get('view', 0)}\n"
+        f"<b>Likes:</b> {curso_atualizado.get('like', 0)}\n"
+        f"<b>Deslikes:</b> {curso_atualizado.get('deslike', 0)}"
+    )
+
+    bot.send_message(message.chat.id, curso_info, parse_mode='HTML')
 
 # Quando o IDNT não existe ou o File ID é diferente e estamos adicionando um novo curso
 def get_nome_new(message, curso):
@@ -2114,8 +2133,26 @@ def get_thumb_new(message, curso):
             {'file_id': curso['file_id']},
             {'$set': curso}
         )
-    bot.send_message(message.chat.id, "✅ Novo curso adicionado com sucesso!")
+    curso_atualizado = video_manager.db.videos.find_one({'file_id': curso['file_id']})
+    curso_info = (
+        f"📚 <b>Curso Atualizado com Sucesso!</b>\n\n"
+        f"<b>IDNT:</b> {curso_atualizado['idnt']}\n"
+        f"<b>Nome:</b> {curso_atualizado['nome']}\n"
+        f"<b>Descrição:</b> {curso_atualizado['description']}\n"
+        f"<b>Temporada:</b> {curso_atualizado['temp']}\n"
+        f"<b>Episódio:</b> {curso_atualizado['episodio']}\n"
+        f"<b>Total de Vídeos:</b> {curso_atualizado.get('video_total', 'N/A')}\n"
+        f"<b>Data de Lançamento:</b> {curso_atualizado.get('lanc', 'N/A')}\n"
+        f"<b>Duração:</b> {curso_atualizado.get('duracao', 'N/A')}\n"
+        f"<b>Categoria:</b> {curso_atualizado.get('categoria', 'N/A')}\n"
+        f"<b>Tamanho:</b> {curso_atualizado.get('tamanho', 'N/A')} MB\n"
+        f"<b>Criado por:</b> {curso_atualizado.get('criado', 'N/A')}\n"
+        f"<b>Visualizações:</b> {curso_atualizado.get('view', 0)}\n"
+        f"<b>Likes:</b> {curso_atualizado.get('like', 0)}\n"
+        f"<b>Deslikes:</b> {curso_atualizado.get('deslike', 0)}"
+    )
 
+    bot.send_message(message.chat.id, curso_info, parse_mode='HTML')
 
 
 def schedule_checker():
