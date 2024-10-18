@@ -13,5 +13,5 @@ def handle_channel_posts(message):
             video_manager.add_filme_db(message)
             print(f"Armazenado com sucesso no db: {video_file_id}")
             bot.send_message(STORAGE_ID, f'Armazenada com sucesso ✅\n\n<b>Nome:</b> {video_caption}\n<b>File_id:</b> <code>{video_file_id}</code>')
-            bot.send_message(BOT_OWNER_ID, f'Armazenada com sucesso ✅\n\n<b>Nome:</b> {video_caption}\n<b>File_id:</b> <code>{video_file_id}</code>')
+            bot.send_message(BOT_OWNER_ID, f'Armazenada com sucesso ✅\n\n<b>Nome:</b> <code>{video_caption}</code>\n<b>File_id:</b> <code>/sdb {video_file_id}</code>')
    
