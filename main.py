@@ -2154,7 +2154,51 @@ def get_thumb_new(message, curso):
 
     bot.send_message(message.chat.id, curso_info, parse_mode='HTML')
 
+@bot.message_handler(commands=['check_video'])
+def check_video(message):
+    if message.chat.type == "private":
+        user_id = message.from_user.id
+        user = user_manager.search_user(user_id)
+        if user and user.get("sudo") == "true":
+                args = message.text.split()
+        if len(args) != 4:  
+                bot.send_message(message.chat.id, "Uso incorreto. Use /check_video idnt temp eps")
+                return
+            
+        idnt = args[1]
+        temp = int(args[2])
+        eps = int(args[3])
+        curso_atualizado = video_manager.db.videos.find_one({
+                'idnt': idnt,
+                'temp': temp,
+                'episodio': eps
+            })
 
+        if not curso_atualizado:
+                bot.send_message(message.chat.id, "🔍 Curso não encontrado com os dados fornecidos.")
+                return
+
+        curso_info = (
+                f"📚 <b>Informações do Curso:</b>\n\n"
+                f"<b>IDNT:</b> <code>{curso_atualizado['idnt']}</code>\n"
+                f"<b>Nome:</b> {curso_atualizado['nome']}\n"
+                f"<b>Descrição:</b> {curso_atualizado['description']}\n"
+                f"<b>Temporada:</b> {curso_atualizado['temp']}\n"
+                f"<b>Episódio:</b> {curso_atualizado['episodio']}\n"
+                f"<b>Total de Vídeos:</b> {curso_atualizado.get('video_total', 'N/A')}\n"
+                f"<b>Data de Lançamento:</b> {curso_atualizado.get('lanc', 'N/A')}\n"
+                f"<b>Duração:</b> {curso_atualizado.get('duracao', 'N/A')}\n"
+                f"<b>Categoria:</b> {curso_atualizado.get('categoria', 'N/A')}\n"
+                f"<b>Tamanho:</b> {curso_atualizado.get('tamanho', 'N/A')} MB\n"
+                f"<b>Criado por:</b> {curso_atualizado.get('criado', 'N/A')}\n"
+                f"<b>Thumn_nail:</b> {curso_atualizado.get('thumb_nail', 'N/A')}\n"
+                f"<b>Visualizações:</b> {curso_atualizado.get('view', 0)}\n"
+                f"<b>Likes:</b> {curso_atualizado.get('like', 0)}\n"
+                f"<b>Deslikes:</b> {curso_atualizado.get('deslike', 0)}"
+            )
+
+        bot.send_message(message.chat.id, curso_info, parse_mode='HTML')
+        
 def schedule_checker():
     while True:
         schedule.run_pending()
