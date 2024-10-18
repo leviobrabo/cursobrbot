@@ -2006,7 +2006,11 @@ def get_idnt(message, curso, file_id):
     curso_existente = video_manager.db.videos.find_one({'idnt': idnt})
     
     if curso_existente:
+        ultimo_curso = video_manager.db.videos.find({'idnt': idnt}).sort('message_id', -1).limit(1)
+        if ultimo_curso and 'thumb_nail' in ultimo_curso[0]:
+            curso['thumb_nail'] = ultimo_curso[0]['thumb_nail']
         curso['idnt'] = idnt
+
         bot.send_message(message.chat.id, "IDNT e File ID já existem. Agora insira as seguintes informações para atualização:")
         bot.send_message(message.chat.id, "Digite a nova descrição:")
         bot.register_next_step_handler(message, get_description_existing, curso)
@@ -2032,12 +2036,6 @@ def get_temp_existing(message, curso):
 def get_episode_existing(message, curso):
     episodio = message.text
     curso['episodio'] = int(episodio)
-    bot.send_message(message.chat.id, "Digite a URL da thumbnail do curso:")
-    bot.register_next_step_handler(message, get_thumb_existing, curso)
-
-def get_thumb_existing(message, curso):
-    thumb_nail_url = message.text
-    curso['thumb_nail'] = thumb_nail_url
 
     # Atualiza o documento com base em idnt e file_id
     video_manager.db.videos.update_one(
@@ -2046,13 +2044,13 @@ def get_thumb_existing(message, curso):
     )
     bot.send_message(message.chat.id, "✅ Dados do curso atualizados com sucesso!")
 
+# Quando o IDNT não existe ou o File ID é diferente e estamos adicionando um novo curso
 def get_nome_new(message, curso):
     nome = message.text
     curso['nome'] = nome
     bot.send_message(message.chat.id, "Digite a descrição do curso:")
     bot.register_next_step_handler(message, get_description_new, curso)
 
-# Quando o IDNT não existe ou o File ID é diferente e estamos adicionando um novo curso
 def get_description_new(message, curso):
     description = message.text
     curso['description'] = description
