@@ -1634,8 +1634,9 @@ def send_curso_details_new(user_id, idnt, chat_id, message_id):
                 star_rating = '⭐️'
 
             photo = curso.get('thumb_nail')
-            temp = int(curso.get('temp'))
-            episodio = 1
+            temp = int(curso.get('temp', 0))
+            if temp is None:
+                temp = 0 
 
             caption = (
                 f"<b>Nome:</b> {curso.get('nome')}\n"
@@ -1674,9 +1675,10 @@ def send_curso_details_new(user_id, idnt, chat_id, message_id):
                 keyboard.append([like_button, deslike_button])
 
             temp_total = get_temp_total(idnt)
-            for episode_num in range(1, temp_total + 1):
-                text = f"▶️ Temporada {episodio}"
-                callback_data = f"EPISODIO= {idnt} {episode_num}"  
+
+            for temp in range(1, temp_total + 1):
+                text = f"▶️ Temporada {temp}"
+                callback_data = f"EPISODIO= {idnt} {temp}"  
                 button = types.InlineKeyboardButton(text, switch_inline_query_current_chat=callback_data)  # Correção aqui
                 keyboard.append([button])
 
