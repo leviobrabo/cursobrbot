@@ -401,10 +401,12 @@ def callback_handler(call):
                 payment_id = callback_data_parts[1]
                 plan_type = callback_data_parts[2]
                 duration = int(callback_data_parts[3])
-
+                print(payment_id)
+                print(plan_type)
+                print(duration)
                 try:
                     payment_status = sdk.payment().get(payment_id) 
-
+                    print(payment_status)
                     if payment_status['status'] == 'approved':
                         bot.send_message(call.message.chat.id, '✅ Pagamento confirmado! Sua assinatura será ativada em breve.')
                         user_id = call.from_user.id
