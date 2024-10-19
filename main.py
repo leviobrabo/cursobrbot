@@ -240,10 +240,9 @@ def callback_handler(call):
                 user_id = call.from_user.id
                 user = user_manager.search_user(user_id)
                 is_premium = user.get('premium') == 'true'
-                photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
+                  
                 
                 photo_sub = 'https://i.imgur.com/bngnGuN.png'
-                photo_erro = 'https://i.imgur.com/fhAOcdi.png'
                 if is_premium:
                     markup = types.InlineKeyboardMarkup()
                     back_to_home = types.InlineKeyboardButton(
@@ -299,7 +298,7 @@ def callback_handler(call):
                             chat_id=call.from_user.id,
                             message_id=call.message.message_id,
                             media=types.InputMediaPhoto(
-                                media=photo_cmp, caption=msg_text_cmp, parse_mode='HTML'
+                                media=photo_cmp, caption=msg_text_cmp+ " ", parse_mode='HTML'
                             ),
                             reply_markup=markup_cmp,
                         )
@@ -467,6 +466,7 @@ def callback_handler(call):
                         "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
                         "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
                     )
+                photo_pay = 'https://i.imgur.com/c3nzNhd.png'
                 bot.edit_message_media(
                 chat_id=call.from_user.id,
                 message_id=call.message.message_id,
