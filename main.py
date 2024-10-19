@@ -563,8 +563,8 @@ def callback_handler(call):
             else:
                 values_btn = types.InlineKeyboardMarkup()
                 btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
-                btn_100 = types.InlineKeyboardButton('⭐️ 350 Estrelas - 2 Meses', callback_data="350_estrelas")
-                btn_150 = types.InlineKeyboardButton('⭐️ 500 Estrelas - 3 Meses', callback_data="500_estrelas")
+                btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
+                btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
                 btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
@@ -805,12 +805,12 @@ def got_payment(message):
         if payload == 'stars_50':
             months = 1
             payload_text = '50 estrela'
-        elif payload == 'stars_350':
+        elif payload == 'stars_100':
             months = 2
-            payload_text = '350 estrelas'
-        elif payload == 'stars_500':
+            payload_text = '100 estrelas'
+        elif payload == 'stars_200':
             months = 3
-            payload_text = '500 estrelas'
+            payload_text = '200 estrelas'
         else:
             logging.error("Erro: o valor do pagamento não é válido.")
             return
