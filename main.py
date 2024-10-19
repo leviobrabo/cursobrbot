@@ -305,12 +305,20 @@ def callback_handler(call):
         elif call.data.startswith('comprar_pix'):
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
-            markup = types.InlineKeyboardMarkup()
-            markup.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
-            markup.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
-            markup.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
-
-            bot.send_message(call.message.chat.id, "Escolha seu plano de assinatura:", reply_markup=markup)
+            markup_pix = types.InlineKeyboardMarkup()
+            markup_pix.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
+            markup_pix.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
+            markup_pix.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
+            photo_pix = 'https://i.imgur.com/ddn7f4N.png'
+            txt_pix = "Escolha seu plano de assinatura:"
+            bot.edit_message_media(
+                        chat_id=call.from_user.id,
+                        message_id=call.message.message_id,
+                        media=types.InputMediaPhoto(
+                            media=photo_pix, caption=txt_pix, parse_mode='HTML'
+                        ),
+                        reply_markup=markup_pix,
+                    )
 
         elif call.data.startswith('plan_'):
                 plan_mapping = {
@@ -344,11 +352,14 @@ def callback_handler(call):
                     img = BytesIO(img_data)
 
                     # Enviando o QR code e o código copiar/colar
-                    bot.send_photo(
-                        call.message.chat.id,
-                        img,
-                        caption=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>",
-                        parse_mode='HTML'
+                    caption_pix_pg=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>"
+                    bot.edit_message_media(
+                                        chat_id=call.message.chat.id,
+                                        message_id=call.message.message_id,
+                                        media=types.InputMediaPhoto(
+                                            media=img, caption=caption_pix_pg, parse_mode='HTML'
+                                        ),
+                                        reply_markup=markup,
                     )
 
                     # Armazena o payment_id e outras informações para verificação futura
@@ -475,12 +486,12 @@ def callback_handler(call):
                 "todos os recursos exclusivos do Curso Bot."
             )
 
-            markup = types.InlineKeyboardMarkup()
+            markup_stars = types.InlineKeyboardMarkup()
             back_to_pay_again = types.InlineKeyboardButton('↩️ Voltar', callback_data='pay_again')
             pay_button = types.InlineKeyboardButton(f'Pagar ⭐{selected_stars}', pay=True)
 
-            markup.add(pay_button)
-            markup.add(back_to_pay_again)
+            markup_stars.add(pay_button)
+            markup_stars.add(back_to_pay_again)
 
             bot.send_invoice(
                 call.from_user.id,
@@ -493,7 +504,7 @@ def callback_handler(call):
                 ],
                 start_parameter=f'stars_{selected_stars}',
                 invoice_payload=f'stars_{selected_stars}',
-                reply_markup=markup
+                reply_markup=markup_stars
             )        
         elif call.data.startswith('pay_again'):
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
