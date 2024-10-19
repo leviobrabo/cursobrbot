@@ -332,9 +332,9 @@ def callback_handler(call):
         elif call.data.startswith('plan_'):
                 try:
                     plan_mapping = {
-                        'plan_1_month': (5, '1 mês', 30),
-                        'plan_2_months': (10, '2 meses', 60),
-                        'plan_3_months': (18, '3 meses', 90),
+                        'plan_1_month': (5, '1 mês', 31),
+                        'plan_2_months': (10, '2 meses', 61),
+                        'plan_3_months': (18, '3 meses', 91),
                     }
 
                     plan_key = call.data
