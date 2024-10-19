@@ -565,7 +565,7 @@ def callback_handler(call):
                 btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
                 btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
                 btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
-                btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
+                btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="comprar")
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
                 values_btn.row(btn_150)
