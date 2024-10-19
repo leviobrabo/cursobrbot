@@ -305,43 +305,12 @@ def callback_handler(call):
         elif call.data.startswith('comprar_pix'):
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
-            is_premium = user.get('premium') == 'true'
+            markup = types.InlineKeyboardMarkup()
+            markup.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
+            markup.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
+            markup.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
 
-            photo_sub = 'https://i.imgur.com/bngnGuN.png'
-            photo_erro = 'https://i.imgur.com/fhAOcdi.png'
-
-                # Caso o usuário já seja premium
-            if is_premium:
-                    markup = types.InlineKeyboardMarkup()
-                    back_to_home = types.InlineKeyboardButton('↩️ Voltar', callback_data='menu_start')
-                    markup.add(back_to_home)
-
-                    final_date = datetime.strptime(user.get('final_date'), '%Y-%m-%d %H:%M:%S')
-                    days_left = (final_date - datetime.now()).days
-
-                    caption_sub = (
-                        "<b>🎉 Parabéns! Você já é um assinante premium.</b>\n\n"
-                        "💎 <b>Assinatura ativa:</b> Você tem acesso total aos cursos e funcionalidades do bot.\n"
-                        f"📅 <b>Data de Expiração:</b> {user.get('final_date')}\n"
-                        f"⏳ <b>Tempo restante:</b> {days_left} dias até a expiração da sua assinatura.\n\n"
-                        "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
-                    )
-                    bot.edit_message_media(
-                        chat_id=call.from_user.id,
-                        message_id=call.message.message_id,
-                        media=types.InputMediaPhoto(
-                            media=photo_sub, caption=caption_sub, parse_mode='HTML'
-                        ),
-                        reply_markup=markup,
-                    )
-                # Se não for premium, exibe as opções de plano e inicia o processo de pagamento
-            else:
-                    markup = types.InlineKeyboardMarkup()
-                    markup.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
-                    markup.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
-                    markup.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
-
-                    bot.send_message(call.message.chat.id, "Escolha seu plano de assinatura:", reply_markup=markup)
+            bot.send_message(call.message.chat.id, "Escolha seu plano de assinatura:", reply_markup=markup)
 
         elif call.data.startswith('plan_'):
                 plan_mapping = {
@@ -454,63 +423,30 @@ def callback_handler(call):
         elif call.data.startswith('comprar_estrela'):
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
-            is_premium = user.get('premium') == 'true'
-            photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
-            
-            photo_sub = 'https://i.imgur.com/bngnGuN.png'
-            photo_erro = 'https://i.imgur.com/fhAOcdi.png'
-            if is_premium:
-                markup = types.InlineKeyboardMarkup()
-                back_to_home = types.InlineKeyboardButton(
-                '↩️ Voltar', callback_data='menu_start'
-                )
-                markup.add(back_to_home)
+            values_btn = types.InlineKeyboardMarkup()
+            btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
+            btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
+            btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
+            btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
+            btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
 
-                final_date = datetime.strptime(user.get('final_date'), '%Y-%m-%d %H:%M:%S')
-                days_left = (final_date - datetime.now()).days
-        
+            values_btn.row(btn_50)
+            values_btn.row(btn_100)
+            values_btn.row(btn_150)
+            values_btn.row(btn_termo)
+            values_btn.row(btn_cancel)
 
-                caption_sub = (
-                    "<b>🎉 Parabéns! Você já é um assinante premium.</b>\n\n"
-                    "💎 <b>Assinatura ativa:</b> Você tem acesso total aos cursos e funcionalidades do bot.\n"
-                    f"📅 <b>Data de Expiração:</b> {user.get('final_date')}\n"
-                    f"⏳ <b>Tempo restante:</b> {days_left} dias até a expiração da sua assinatura.\n\n"
-                    "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
-                )
-                bot.edit_message_media(
-                chat_id=call.from_user.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
-                    media=photo_sub, caption=caption_sub, parse_mode='HTML'
-                ),
-                reply_markup=markup,
-
-            )
-            else:
-                values_btn = types.InlineKeyboardMarkup()
-                btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
-                btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
-                btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
-                btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
-                btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
-
-                values_btn.row(btn_50)
-                values_btn.row(btn_100)
-                values_btn.row(btn_150)
-                values_btn.row(btn_termo)
-                values_btn.row(btn_cancel)
-
-                caption_nws = (
+            caption_nws = (
                     "⭐️ <b>Escolha seu plano de assinatura:</b>\n\n"
                     "Com a assinatura premium, você terá acesso ilimitado a todos os cursos, "
                     "suporte prioritário e a possibilidade de favoritar seus cursos preferidos. "
                     "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
                     "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
                 )
-                bot.edit_message_media(
-                chat_id=call.from_user.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
+            bot.edit_message_media(
+            chat_id=call.from_user.id,
+            message_id=call.message.message_id,
+            media=types.InputMediaPhoto(
                     media=photo_pay, caption=caption_nws, parse_mode='HTML'
                 ),
                 reply_markup=values_btn,
