@@ -273,10 +273,10 @@ def callback_handler(call):
                 else:
                     markup_cmp = types.InlineKeyboardMarkup()
                     btn_comprar_estrela = types.InlineKeyboardButton(
-                        '💫 Comprar com Estrelas', callback_data='comprar_estrela'
+                        '💫 Comprar com Estrelas', callback_data='estrela'
                     )
                     btn_comprar_pix = types.InlineKeyboardButton(
-                        '💵 Pagar com PIX', callback_data='comprar_pix'
+                        '💵 Pagar com PIX', callback_data='pix'
                     )
                     back_to_home = types.InlineKeyboardButton(
                         '↩️ Voltar', callback_data='menu_start'
@@ -304,7 +304,7 @@ def callback_handler(call):
                         )
             except Exception as e:
                 logging.error(f'Erro ao gerar pagamento: {e}')
-        elif call.data.startswith('comprar_pix'):
+        elif call.data.startswith('pix'):
             try:
                 user_id = call.from_user.id
                 user = user_manager.search_user(user_id)
@@ -442,7 +442,7 @@ def callback_handler(call):
             except Exception as e:
                 logging.error(f'Erro ao gerar pagamento: {e}')
 
-        elif call.data.startswith('comprar_estrela'):
+        elif call.data.startswith('estrela'):
             try:
                 user_id = call.from_user.id
                 user = user_manager.search_user(user_id)
