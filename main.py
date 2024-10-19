@@ -369,7 +369,7 @@ def callback_handler(call):
                                             media=types.InputMediaPhoto(
                                                 media=img, caption=caption_pix_pg, parse_mode='HTML'
                                             ),
-                                            reply_markup=markup,
+                                            reply_markup=markup_pix,
                         )
 
                         # Armazena o payment_id e outras informações para verificação futura
