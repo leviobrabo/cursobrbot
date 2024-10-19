@@ -5,3 +5,5 @@ requests==2.32.3
 schedule==1.2.2
 pymongo==4.8.0
 configparser==7.1.0
+mercadopago==2.2.3  
+Pillow==10.4.0 

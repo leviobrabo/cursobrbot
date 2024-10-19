@@ -15,3 +15,4 @@ GROUP_LOG_ID = config['BOT']['cursos_GROUP']
 BOT_OWNER_ID = int(config['BOT']['OWNER_ID'])
 STORAGE_ID = int(config['BOT']['cursos_ARMAZENAMENTO'])
 PAYMENT_POST_ID = int(config['BOT']['cursos_POST_PAGAMENTO'])
+TOKEN_MERCADOPAGO = config['BOT']['cursos_MERCADO_PAGO']
