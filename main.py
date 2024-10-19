@@ -361,26 +361,6 @@ def callback_handler(call):
                         img_data = base64.b64decode(pix_qr_code_base64)
                         img = BytesIO(img_data)
 
-                        # Enviando o QR code e o código copiar/colar
-                        caption_pix_pg=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>"
-                        
-                        markup_pix = types.InlineKeyboardMarkup()
-                        markup_pix.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
-                        markup_pix.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
-                        markup_pix.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
-                        markup_pix.add(types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28'))
-                        markup_pix.add(types.InlineKeyboardButton('↩️ Voltar', callback_data='comprar'))
-
-
-                        bot.edit_message_media(
-                                            chat_id=call.message.chat.id,
-                                            message_id=call.message.message_id,
-                                            media=types.InputMediaPhoto(
-                                                media=img, caption=caption_pix_pg, parse_mode='HTML'
-                                            ),
-                                            reply_markup=markup_pix,
-                        )
-
                         # Armazena o payment_id e outras informações para verificação futura
                         pending_payments[str(payment_id)] = {
                             'user_id': call.from_user.id,
@@ -389,11 +369,22 @@ def callback_handler(call):
                             'duration': duration
                         }
 
-                        # Envia botão para verificar pagamento
+                        # Enviando o QR code e o código copiar/colar
+                        caption_pix_pg=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>\n\n\nApós efetuar o pagamento, clique em 'Verificar pagamento' abaixo."
+                        
+                    
                         verify_keyboard = types.InlineKeyboardMarkup()
                         verify_keyboard.add(types.InlineKeyboardButton('✅ Verificar pagamento', callback_data=f'verify_payment|{payment_id}|{plan_type}|{duration}'))
 
-                        bot.send_message(call.message.chat.id, "Após efetuar o pagamento, clique em 'Verificar pagamento' abaixo.", reply_markup=verify_keyboard)
+
+                        bot.edit_message_media(
+                                            chat_id=call.message.chat.id,
+                                            message_id=call.message.message_id,
+                                            media=types.InputMediaPhoto(
+                                                media=img, caption=caption_pix_pg, parse_mode='HTML'
+                                            ),
+                                            reply_markup=verify_keyboard,
+                        )
 
                     except Exception as e:
                         bot.send_message(call.message.chat.id, f'Erro ao gerar pagamento: {e}')
