@@ -403,8 +403,7 @@ def callback_handler(call):
                 duration = int(callback_data_parts[3])
 
                 try:
-                    pix = TOKEN_MERCADOPAGO
-                    payment_status = pix.check_payment_status(payment_id)
+                    payment_status = sdk.payment().get(payment_id) 
 
                     if payment_status['status'] == 'approved':
                         bot.send_message(call.message.chat.id, '✅ Pagamento confirmado! Sua assinatura será ativada em breve.')
