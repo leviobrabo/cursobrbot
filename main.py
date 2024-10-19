@@ -406,8 +406,7 @@ def callback_handler(call):
                 print(duration)
                 try:
                     payment_status = sdk.payment().get(payment_id) 
-                    print(payment_status)
-                    if payment_status['status'] == 'approved':
+                    if payment_response['status'] == 200 and payment_response['response']['status'] == 'approved':
                         bot.send_message(call.message.chat.id, '✅ Pagamento confirmado! Sua assinatura será ativada em breve.')
                         user_id = call.from_user.id
                         current_datetime = datetime.now()
