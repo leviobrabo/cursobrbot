@@ -236,150 +236,160 @@ def callback_handler(call):
                 reply_markup=markup,
             )
         elif call.data.startswith('comprar'):
-            user_id = call.from_user.id
-            user = user_manager.search_user(user_id)
-            is_premium = user.get('premium') == 'true'
-            photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
-            
-            photo_sub = 'https://i.imgur.com/bngnGuN.png'
-            photo_erro = 'https://i.imgur.com/fhAOcdi.png'
-            if is_premium:
-                markup = types.InlineKeyboardMarkup()
-                back_to_home = types.InlineKeyboardButton(
-                '↩️ Voltar', callback_data='menu_start'
-                )
-                markup.add(back_to_home)
-
-                final_date = datetime.strptime(user.get('final_date'), '%Y-%m-%d %H:%M:%S')
-                days_left = (final_date - datetime.now()).days
-        
-
-                caption_sub = (
-                    "<b>🎉 Parabéns! Você já é um assinante premium.</b>\n\n"
-                    "💎 <b>Assinatura ativa:</b> Você tem acesso total aos cursos e funcionalidades do bot.\n"
-                    f"📅 <b>Data de Expiração:</b> {user.get('final_date')}\n"
-                    f"⏳ <b>Tempo restante:</b> {days_left} dias até a expiração da sua assinatura.\n\n"
-                    "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
-                )
-                bot.edit_message_media(
-                chat_id=call.from_user.id,
-                message_id=call.message.message_id,
-                media=types.InputMediaPhoto(
-                    media=photo_sub, caption=caption_sub, parse_mode='HTML'
-                ),
-                reply_markup=markup,
-
-            )
-            else:
-                markup = types.InlineKeyboardMarkup()
-                btn_comprar_estrela = types.InlineKeyboardButton(
-                    '💫 Comprar com Estrelas', callback_data='comprar_estrela'
-                )
-                btn_comprar_pix = types.InlineKeyboardButton(
-                    '💵 Pagar com PIX', callback_data='comprar_pix'
-                )
-                back_to_home = types.InlineKeyboardButton(
-                    '↩️ Voltar', callback_data='menu_start'
-                )
-                markup.add(btn_comprar_estrela, btn_comprar_pix)
-                markup.add(back_to_home)
-
-                msg_text_cmp = (
-                    "<b>💎 Escolha sua forma de pagamento:</b>\n\n"
-                    "Você pode escolher entre pagar via PIX ou através das "
-                    "<a href='https://t.me/TelegramTipsBR/329'>Estrelas do Telegram</a>.\n\n"
-                    "💫 <b>Estrelas do Telegram:</b> As estrelas são usadas para desbloquear conteúdo exclusivo e suportar o projeto diretamente no Telegram.\n\n"
-                    "💵 <b>PIX:</b> Pague diretamente com PIX para uma experiência rápida e segura."
-                )
-
-                photo_cmp = 'https://i.imgur.com/5TgYbot.png'
+            try:
+                user_id = call.from_user.id
+                user = user_manager.search_user(user_id)
+                is_premium = user.get('premium') == 'true'
+                photo_pay = 'https://i.imgur.com/c3nzNhd.png'  
                 
-                bot.edit_message_media(
-                        chat_id=call.from_user.id,
-                        message_id=call.message.message_id,
-                        media=types.InputMediaPhoto(
-                            media=photo_cmp, caption=msg_text_cmp, parse_mode='HTML'
-                        ),
-                        reply_markup=markup,
+                photo_sub = 'https://i.imgur.com/bngnGuN.png'
+                photo_erro = 'https://i.imgur.com/fhAOcdi.png'
+                if is_premium:
+                    markup = types.InlineKeyboardMarkup()
+                    back_to_home = types.InlineKeyboardButton(
+                    '↩️ Voltar', callback_data='menu_start'
                     )
+                    markup.add(back_to_home)
+
+                    final_date = datetime.strptime(user.get('final_date'), '%Y-%m-%d %H:%M:%S')
+                    days_left = (final_date - datetime.now()).days
+            
+
+                    caption_sub = (
+                        "<b>🎉 Parabéns! Você já é um assinante premium.</b>\n\n"
+                        "💎 <b>Assinatura ativa:</b> Você tem acesso total aos cursos e funcionalidades do bot.\n"
+                        f"📅 <b>Data de Expiração:</b> {user.get('final_date')}\n"
+                        f"⏳ <b>Tempo restante:</b> {days_left} dias até a expiração da sua assinatura.\n\n"
+                        "Caso deseje renovar ou alterar seu plano, basta escolher uma das opções abaixo."
+                    )
+                    bot.edit_message_media(
+                    chat_id=call.from_user.id,
+                    message_id=call.message.message_id,
+                    media=types.InputMediaPhoto(
+                        media=photo_sub, caption=caption_sub, parse_mode='HTML'
+                    ),
+                    reply_markup=markup,
+
+                )
+                else:
+                    markup_cmp = types.InlineKeyboardMarkup()
+                    btn_comprar_estrela = types.InlineKeyboardButton(
+                        '💫 Comprar com Estrelas', callback_data='comprar_estrela'
+                    )
+                    btn_comprar_pix = types.InlineKeyboardButton(
+                        '💵 Pagar com PIX', callback_data='comprar_pix'
+                    )
+                    back_to_home = types.InlineKeyboardButton(
+                        '↩️ Voltar', callback_data='menu_start'
+                    )
+                    markup_cmp.add(btn_comprar_estrela, btn_comprar_pix)
+                    markup_cmp.add(back_to_home)
+
+                    msg_text_cmp = (
+                        "<b>💎 Escolha sua forma de pagamento:</b>\n\n"
+                        "Você pode escolher entre pagar via PIX ou através das "
+                        "<a href='https://t.me/TelegramTipsBR/329'>Estrelas do Telegram</a>.\n\n"
+                        "💫 <b>Estrelas do Telegram:</b> As estrelas são usadas para desbloquear conteúdo exclusivo e suportar o projeto diretamente no Telegram.\n\n"
+                        "💵 <b>PIX:</b> Pague diretamente com PIX para uma experiência rápida e segura."
+                    )
+
+                    photo_cmp = 'https://i.imgur.com/5TgYbot.png'
+                    
+                    bot.edit_message_media(
+                            chat_id=call.from_user.id,
+                            message_id=call.message.message_id,
+                            media=types.InputMediaPhoto(
+                                media=photo_cmp, caption=msg_text_cmp, parse_mode='HTML'
+                            ),
+                            reply_markup=markup_cmp,
+                        )
+            except Exception as e:
+                logging.error(f'Erro ao gerar pagamento: {e}')
         elif call.data.startswith('comprar_pix'):
-            user_id = call.from_user.id
-            user = user_manager.search_user(user_id)
-            markup_pix = types.InlineKeyboardMarkup()
-            markup_pix.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
-            markup_pix.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
-            markup_pix.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
-            photo_pix = 'https://i.imgur.com/ddn7f4N.png'
-            txt_pix = "Escolha seu plano de assinatura:"
-            bot.edit_message_media(
-                        chat_id=call.from_user.id,
-                        message_id=call.message.message_id,
-                        media=types.InputMediaPhoto(
-                            media=photo_pix, caption=txt_pix, parse_mode='HTML'
-                        ),
-                        reply_markup=markup_pix,
-                    )
+            try:
+                user_id = call.from_user.id
+                user = user_manager.search_user(user_id)
+                markup_pix = types.InlineKeyboardMarkup()
+                markup_pix.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
+                markup_pix.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
+                markup_pix.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
+                photo_pix = 'https://i.imgur.com/ddn7f4N.png'
+                txt_pix = "Escolha seu plano de assinatura:"
+                bot.edit_message_media(
+                            chat_id=call.from_user.id,
+                            message_id=call.message.message_id,
+                            media=types.InputMediaPhoto(
+                                media=photo_pix, caption=txt_pix, parse_mode='HTML'
+                            ),
+                            reply_markup=markup_pix,
+                        )
+            except Exception as e:
+                logging.error(f'Erro ao gerar pagamento: {e}')
 
         elif call.data.startswith('plan_'):
-                plan_mapping = {
-                    'plan_1_month': (5, '1 mês', 30),
-                    'plan_2_months': (10, '2 meses', 60),
-                    'plan_3_months': (18, '3 meses', 90),
-                }
-
-                plan_key = call.data
-                if plan_key not in plan_mapping:
-                    bot.answer_callback_query(call.id, 'Plano inválido.')
-                    return
-
-                amount, plan_type, duration = plan_mapping[plan_key]
-
                 try:
-                    # Criação de pagamento via PIX
-                    payment_result = create_payment(amount, plan_type, duration)
-                    if payment_result['status'] != 201:
-                        error_message = payment_result.get('response', {}).get('message', 'Erro desconhecido')
-                        bot.send_message(call.message.chat.id, f'Erro ao criar o pagamento: {error_message}')
-                        return
-
-                    # Extraindo informações do pagamento
-                    payment_id = payment_result['response']['id']
-                    pix_qr_code_base64 = payment_result['response']['point_of_interaction']['transaction_data']['qr_code_base64']
-                    pix_copy_paste = payment_result['response']['point_of_interaction']['transaction_data']['qr_code']
-
-                    # Decodificando a imagem do QR code
-                    img_data = base64.b64decode(pix_qr_code_base64)
-                    img = BytesIO(img_data)
-
-                    # Enviando o QR code e o código copiar/colar
-                    caption_pix_pg=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>"
-                    bot.edit_message_media(
-                                        chat_id=call.message.chat.id,
-                                        message_id=call.message.message_id,
-                                        media=types.InputMediaPhoto(
-                                            media=img, caption=caption_pix_pg, parse_mode='HTML'
-                                        ),
-                                        reply_markup=markup,
-                    )
-
-                    # Armazena o payment_id e outras informações para verificação futura
-                    pending_payments[str(payment_id)] = {
-                        'user_id': call.from_user.id,
-                        'timestamp': datetime.now(),
-                        'plan_type': plan_type,
-                        'duration': duration
+                    plan_mapping = {
+                        'plan_1_month': (5, '1 mês', 30),
+                        'plan_2_months': (10, '2 meses', 60),
+                        'plan_3_months': (18, '3 meses', 90),
                     }
 
-                    # Envia botão para verificar pagamento
-                    verify_keyboard = types.InlineKeyboardMarkup()
-                    verify_keyboard.add(types.InlineKeyboardButton('✅ Verificar pagamento', callback_data=f'verify_payment|{payment_id}|{plan_type}|{duration}'))
+                    plan_key = call.data
+                    if plan_key not in plan_mapping:
+                        bot.answer_callback_query(call.id, 'Plano inválido.')
+                        return
 
-                    bot.send_message(call.message.chat.id, "Após efetuar o pagamento, clique em 'Verificar pagamento' abaixo.", reply_markup=verify_keyboard)
+                    amount, plan_type, duration = plan_mapping[plan_key]
 
+                    try:
+                        # Criação de pagamento via PIX
+                        payment_result = create_payment(amount, plan_type, duration)
+                        if payment_result['status'] != 201:
+                            error_message = payment_result.get('response', {}).get('message', 'Erro desconhecido')
+                            bot.send_message(call.message.chat.id, f'Erro ao criar o pagamento: {error_message}')
+                            return
+
+                        # Extraindo informações do pagamento
+                        payment_id = payment_result['response']['id']
+                        pix_qr_code_base64 = payment_result['response']['point_of_interaction']['transaction_data']['qr_code_base64']
+                        pix_copy_paste = payment_result['response']['point_of_interaction']['transaction_data']['qr_code']
+
+                        # Decodificando a imagem do QR code
+                        img_data = base64.b64decode(pix_qr_code_base64)
+                        img = BytesIO(img_data)
+
+                        # Enviando o QR code e o código copiar/colar
+                        caption_pix_pg=f"Utilize o código abaixo para efetuar o pagamento:\n\n<code>{pix_copy_paste}</code>"
+                        bot.edit_message_media(
+                                            chat_id=call.message.chat.id,
+                                            message_id=call.message.message_id,
+                                            media=types.InputMediaPhoto(
+                                                media=img, caption=caption_pix_pg, parse_mode='HTML'
+                                            ),
+                                            reply_markup=markup,
+                        )
+
+                        # Armazena o payment_id e outras informações para verificação futura
+                        pending_payments[str(payment_id)] = {
+                            'user_id': call.from_user.id,
+                            'timestamp': datetime.now(),
+                            'plan_type': plan_type,
+                            'duration': duration
+                        }
+
+                        # Envia botão para verificar pagamento
+                        verify_keyboard = types.InlineKeyboardMarkup()
+                        verify_keyboard.add(types.InlineKeyboardButton('✅ Verificar pagamento', callback_data=f'verify_payment|{payment_id}|{plan_type}|{duration}'))
+
+                        bot.send_message(call.message.chat.id, "Após efetuar o pagamento, clique em 'Verificar pagamento' abaixo.", reply_markup=verify_keyboard)
+
+                    except Exception as e:
+                        bot.send_message(call.message.chat.id, f'Erro ao gerar pagamento: {e}')
                 except Exception as e:
-                    bot.send_message(call.message.chat.id, f'Erro ao gerar pagamento: {e}')
+                    logging.error(f'Erro ao gerar pagamento: {e}')
 
         elif call.data.startswith('verify_payment'):
+            try:
                 callback_data_parts = call.data.split('|')
                 if len(callback_data_parts) != 4:
                     bot.send_message(call.message.chat.id, 'Dados inválidos no callback. Por favor, tente novamente.')
@@ -430,82 +440,90 @@ def callback_handler(call):
 
                 except Exception as e:
                     bot.send_message(call.message.chat.id, f'Erro ao verificar pagamento: {e}')
-        
+            except Exception as e:
+                logging.error(f'Erro ao gerar pagamento: {e}')
+
         elif call.data.startswith('comprar_estrela'):
-            user_id = call.from_user.id
-            user = user_manager.search_user(user_id)
-            values_btn = types.InlineKeyboardMarkup()
-            btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
-            btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
-            btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
-            btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
-            btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
+            try:
+                user_id = call.from_user.id
+                user = user_manager.search_user(user_id)
+                values_btn = types.InlineKeyboardMarkup()
+                btn_50 = types.InlineKeyboardButton('⭐️ 50 Estrelas - 1 Mês', callback_data="50_estrelas")
+                btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
+                btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
+                btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
+                btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
 
-            values_btn.row(btn_50)
-            values_btn.row(btn_100)
-            values_btn.row(btn_150)
-            values_btn.row(btn_termo)
-            values_btn.row(btn_cancel)
+                values_btn.row(btn_50)
+                values_btn.row(btn_100)
+                values_btn.row(btn_150)
+                values_btn.row(btn_termo)
+                values_btn.row(btn_cancel)
 
-            caption_nws = (
-                    "⭐️ <b>Escolha seu plano de assinatura:</b>\n\n"
-                    "Com a assinatura premium, você terá acesso ilimitado a todos os cursos, "
-                    "suporte prioritário e a possibilidade de favoritar seus cursos preferidos. "
-                    "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
-                    "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
+                caption_nws = (
+                        "⭐️ <b>Escolha seu plano de assinatura:</b>\n\n"
+                        "Com a assinatura premium, você terá acesso ilimitado a todos os cursos, "
+                        "suporte prioritário e a possibilidade de favoritar seus cursos preferidos. "
+                        "Além disso, seu pagamento é feito de maneira anônima com estrelas do Telegram!\n\n"
+                        "<blockquote>⭐️ 100 ≈ US$ 1,84</blockquote>"
+                    )
+                bot.edit_message_media(
+                chat_id=call.from_user.id,
+                message_id=call.message.message_id,
+                media=types.InputMediaPhoto(
+                        media=photo_pay, caption=caption_nws, parse_mode='HTML'
+                    ),
+                    reply_markup=values_btn,
                 )
-            bot.edit_message_media(
-            chat_id=call.from_user.id,
-            message_id=call.message.message_id,
-            media=types.InputMediaPhoto(
-                    media=photo_pay, caption=caption_nws, parse_mode='HTML'
-                ),
-                reply_markup=values_btn,
-            )
+            except Exception as e:
+                logging.error(f'Erro ao gerar pagamento: {e}')
         elif call.data in ["50_estrelas", "100_estrelas", "200_estrelas"]:
-            user_id = call.from_user.id
-            user = user_manager.search_user(user_id)
-            bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id) 
-            stars_map = {
-                "50_estrelas": 50,
-                "100_estrelas": 100,
-                "200_estrelas": 200
-            }
-            
-            months_map = {
-                "50_estrelas": 1,
-                "100_estrelas": 2,
-                "200_estrelas": 3
-            }
-            
-            selected_stars = stars_map[call.data]
-            selected_months = months_map[call.data]
-            description = (
-                f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!" 
-                "\n\nLembre-se que você desbloquear "
-                "todos os recursos exclusivos do Curso Bot."
-            )
+            try:
+                user_id = call.from_user.id
+                user = user_manager.search_user(user_id)
+                bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id) 
+                stars_map = {
+                    "50_estrelas": 50,
+                    "100_estrelas": 100,
+                    "200_estrelas": 200
+                }
+                
+                months_map = {
+                    "50_estrelas": 1,
+                    "100_estrelas": 2,
+                    "200_estrelas": 3
+                }
+                
+                selected_stars = stars_map[call.data]
+                selected_months = months_map[call.data]
+                description = (
+                    f"Você está escolhendo a assinatura premium de {selected_months} mês(es)!" 
+                    "\n\nLembre-se que você desbloquear "
+                    "todos os recursos exclusivos do Curso Bot."
+                )
 
-            markup_stars = types.InlineKeyboardMarkup()
-            back_to_pay_again = types.InlineKeyboardButton('↩️ Voltar', callback_data='pay_again')
-            pay_button = types.InlineKeyboardButton(f'Pagar ⭐{selected_stars}', pay=True)
+                markup_stars = types.InlineKeyboardMarkup()
+                back_to_pay_again = types.InlineKeyboardButton('↩️ Voltar', callback_data='pay_again')
+                pay_button = types.InlineKeyboardButton(f'Pagar ⭐{selected_stars}', pay=True)
 
-            markup_stars.add(pay_button)
-            markup_stars.add(back_to_pay_again)
+                markup_stars.add(pay_button)
+                markup_stars.add(back_to_pay_again)
 
-            bot.send_invoice(
-                call.from_user.id,
-                provider_token=None,  
-                title=f'Compra de {selected_stars} Estrelas - {selected_months} mês(es) de Premium',
-                description=description,
-                currency='XTR',  
-                prices=[
-                    telebot.types.LabeledPrice(label=f'{selected_stars} Estrelas', amount=selected_stars )  
-                ],
-                start_parameter=f'stars_{selected_stars}',
-                invoice_payload=f'stars_{selected_stars}',
-                reply_markup=markup_stars
-            )        
+                bot.send_invoice(
+                    call.from_user.id,
+                    provider_token=None,  
+                    title=f'Compra de {selected_stars} Estrelas - {selected_months} mês(es) de Premium',
+                    description=description,
+                    currency='XTR',  
+                    prices=[
+                        telebot.types.LabeledPrice(label=f'{selected_stars} Estrelas', amount=selected_stars )  
+                    ],
+                    start_parameter=f'stars_{selected_stars}',
+                    invoice_payload=f'stars_{selected_stars}',
+                    reply_markup=markup_stars
+                )        
+            except Exception as e:
+                logging.error(f'Erro ao gerar pagamento: {e}')
         elif call.data.startswith('pay_again'):
             bot.delete_message(chat_id=call.message.chat.id, message_id=call.message.message_id)
             user_id = call.from_user.id
