@@ -312,6 +312,9 @@ def callback_handler(call):
                 markup_pix.add(types.InlineKeyboardButton('1 mês - R$5,00', callback_data='plan_1_month'))
                 markup_pix.add(types.InlineKeyboardButton('2 meses - R$10,00', callback_data='plan_2_months'))
                 markup_pix.add(types.InlineKeyboardButton('3 meses - R$18,00', callback_data='plan_3_months'))
+                markup_pix.add(types.InlineKeyboardButton(
+                        '↩️ Voltar', callback_data='comprar'
+                    ))
                 photo_pix = 'https://i.imgur.com/ddn7f4N.png'
                 txt_pix = "Escolha seu plano de assinatura:"
                 bot.edit_message_media(
@@ -451,7 +454,7 @@ def callback_handler(call):
                 btn_100 = types.InlineKeyboardButton('⭐️ 100 Estrelas - 2 Meses', callback_data="100_estrelas")
                 btn_150 = types.InlineKeyboardButton('⭐️ 200 Estrelas - 3 Meses', callback_data="200_estrelas")
                 btn_termo = types.InlineKeyboardButton('📁 Termo de uso', url='https://telegra.ph/Termo-de-uso-09-28')
-                btn_cancel = types.InlineKeyboardButton('Cancelar', callback_data="menu_start")
+                btn_cancel = types.InlineKeyboardButton('Voltar', callback_data="comprar")
 
                 values_btn.row(btn_50)
                 values_btn.row(btn_100)
