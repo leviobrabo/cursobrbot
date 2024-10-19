@@ -291,13 +291,17 @@ def callback_handler(call):
                     "💫 <b>Estrelas do Telegram:</b> As estrelas são usadas para desbloquear conteúdo exclusivo e suportar o projeto diretamente no Telegram.\n\n"
                     "💵 <b>PIX:</b> Pague diretamente com PIX para uma experiência rápida e segura."
                 )
+
+                photo_cmp = 'https://i.imgur.com/5TgYbot.png'
                 
-                bot.send_message(
-                    chat_id=call.from_user.id,
-                    text=msg_text_cmp,
-                    parse_mode='HTML',
-                    reply_markup=markup
-                )
+                bot.edit_message_media(
+                        chat_id=call.from_user.id,
+                        message_id=call.message.message_id,
+                        media=types.InputMediaPhoto(
+                            media=photo_cmp, caption=msg_text_cmp, parse_mode='HTML'
+                        ),
+                        reply_markup=markup,
+                    )
         elif call.data.startswith('comprar_pix'):
             user_id = call.from_user.id
             user = user_manager.search_user(user_id)
